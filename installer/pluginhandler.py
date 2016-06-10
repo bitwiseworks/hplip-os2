@@ -42,7 +42,7 @@ except ImportError:
         return sha.new(s).hexdigest()
 
 
-PLUGIN_STATE_FILE = '/var/lib/hp/hplip.state'
+PLUGIN_STATE_FILE = '/@unixroot/var/lib/hp/hplip.state'
 PLUGIN_FALLBACK_LOCATION = 'http://hplipopensource.com/hplip-web/plugin/'
 
 
@@ -80,7 +80,7 @@ class PluginHandle(object):
         DOCDIR = sys_conf.get('dirs', 'doc')
         CUPSBACKENDDIR = sys_conf.get('dirs', 'cupsbackend')
         CUPSFILTERDIR = sys_conf.get('dirs', 'cupsfilter')
-        RULESDIR = '/etc/udev/rules.d'
+        RULESDIR = '/@unixroot/etc/udev/rules.d'
         BIN = sys_conf.get('dirs', 'bin')
 
         # Copying plugin.spec file to home dir.
@@ -100,8 +100,8 @@ class PluginHandle(object):
             SANELIBDIR = '/usr/lib64/sane'
             LIBDIR = '/usr/lib64'
         else:
-            SANELIBDIR = '/usr/lib/sane'
-            LIBDIR = '/usr/lib'
+            SANELIBDIR = '/@unixroot/usr/lib/sane'
+            LIBDIR = '/@unixroot/usr/lib'
 
         copies = []
 
@@ -236,8 +236,8 @@ class PluginHandle(object):
     def __setPluginConfFile(self):
         home = sys_conf.get('dirs', 'home')
 
-        if os.path.exists('/etc/hp/plugin.conf'):
-            self.__plugin_conf_file = "file:///etc/hp/plugin.conf"
+        if os.path.exists('/@unixroot/etc/hp/plugin.conf'):
+            self.__plugin_conf_file = "file:///@unixroot/etc/hp/plugin.conf"
 
         elif os.path.exists(os.path.join(home, 'plugin.conf')):
             self.__plugin_conf_file = "file://" + os.path.join(home, 'plugin.conf')

@@ -102,7 +102,7 @@ LIBS_LIST=['libhpmud.*','libhpip.*','sane/libsane-hpaio.*','cups/backend/hp','cu
 
 HPLIP_EXT_LIST = ['cupsext.so', 'cupsext.la', 'scanext.so', 'scanext.la', 'hpmudext.so', 'hpmudext.la', 'pcardext.so', 'pcardext.la']
 
-FILES_LIST=[ '/usr/share/cups/drv/hp/','/usr/local/share/ppd/HP/','/usr/local/share/cups/drv/hp/' ,'/usr/share/applications/hplip.desktop', '/etc/xdg/autostart/hplip-systray.desktop', '/etc/hp/hplip.conf', '/usr/share/doc/hplip-*','/usr/lib/systemd/system/hplip-printer*.service']
+FILES_LIST=[ '/@unixroot/usr/share/cups/drv/hp/','/@unixroot/usr/local/share/ppd/HP/','/@unixroot/usr/local/share/cups/drv/hp/' ,'/@unixroot/usr/share/applications/hplip.desktop', '/@unixroot/etc/xdg/autostart/hplip-systray.desktop', '/@unixroot/etc/hp/hplip.conf', '/@unixroot/usr/share/doc/hplip-*','/@unixroot/usr/lib/systemd/system/hplip-printer*.service']
 
 RULES_LIST=['56-hpmud.rules','56-hpmud_sysfs.rules', '40-hplip.rules', '56-hpmud_support.rules', '56-hpmud_support_sysfs.rules','55-hpmud.rules','55-hpmud_sysfs.rules','56-hpmud_add_printer.rules','56-hpmud_add_printer_sysfs.rules', '86-hpmud-hp_*.rules', '86-hpmud_plugin.rules', '86-hpmud_plugin_sysfs.rules']
 
@@ -110,7 +110,7 @@ HPLIP_LIST=['*.py','*.pyc', 'base', 'copier','data','installer','pcard','ui4','u
 
 PLUGIN_LIST=['fax/plugins/','prnt/plugins/','scan/plugins/']
 
-PLUGIN_STATE =['/var/lib/hp/hplip.state']
+PLUGIN_STATE =['/@unixroot/var/lib/hp/hplip.state']
 
 
 # end
@@ -188,10 +188,10 @@ SCANEXT_STR     = 'Scan-SANE-Extension'
 QT_STR          = "Python-Qt"
 
 
-APPARMOR_DIR = "/etc/apparmor.d"
-SELINUX_DIR = "/etc/selinux/targeted/policy/policy*"
-SEC_DICT = {"AppArmor": (APPARMOR_DIR, ["/etc/apparmor.d/usr.share.hplip", "/etc/apparmor.d/abstractions/hplip"]),
-            "SELinux": (SELINUX_DIR, ["/etc/selinux/targeted/modules/active/modules/hplip.pp"])
+APPARMOR_DIR = "/@unixroot/etc/apparmor.d"
+SELINUX_DIR = "/@unixroot/etc/selinux/targeted/policy/policy*"
+SEC_DICT = {"AppArmor": (APPARMOR_DIR, ["/@unixroot/etc/apparmor.d/usr.share.hplip", "/@unixroot/etc/apparmor.d/abstractions/hplip"]),
+            "SELinux": (SELINUX_DIR, ["/@unixroot/etc/selinux/targeted/modules/active/modules/hplip.pp"])
 }
 
 
@@ -228,7 +228,7 @@ class CoreInstall(object):
         self.endian = utils.LITTLE_ENDIAN
         self.distro, self.distro_name, self.distro_version = DISTRO_UNKNOWN, '', DISTRO_VER_UNKNOWN
         self.distro_version_supported = False
-        self.install_location = '/usr'
+        self.install_location = '/@unixroot/usr'
         self.hplip_present = False
         self.have_dependencies = {}
         self.native_cups = True
@@ -618,7 +618,7 @@ class CoreInstall(object):
         # Getting distro information using /etc/issue file
         if not found: 
             try:
-                name = open('/etc/issue', 'r').read().lower().strip()
+                name = open('/@unixroot/etc/issue', 'r').read().lower().strip()
             except IOError:
                 found = False
             else:
@@ -890,14 +890,14 @@ class CoreInstall(object):
             if not check_lib('libusb'):
                 return False
             if self.distro_name != "rhel":
-                return len(locate_file_contains("usb.h", '/usr/include', 'usb_init'))
+                return len(locate_file_contains("usb.h", '/@unixroot/usr/include', 'usb_init'))
             else:
                 return True
         else:
             if not check_lib('libusb-1.0'):
                 return False
             if self.distro_name != "rhel":
-                return len(locate_file_contains("libusb.h", '/usr/include/libusb-1.0', 'libusb_init'))
+                return len(locate_file_contains("libusb.h", '/@unixroot/usr/include/libusb-1.0', 'libusb_init'))
             else:
                 return True
 
@@ -957,7 +957,7 @@ class CoreInstall(object):
 
 
     def check_sane_devel(self):
-        return len(locate_file_contains("sane.h", '/usr/include', 'extern SANE_Status sane_init'))
+        return len(locate_file_contains("sane.h", '/@unixroot/usr/include', 'extern SANE_Status sane_init'))
 
 
     def check_xsane(self):
@@ -1035,7 +1035,7 @@ class CoreInstall(object):
 
 
     def check_python_devel(self):
-        dir_list = glob.glob('/usr/include/python%d*'%sys.version_info[0])
+        dir_list = glob.glob('/@unixroot/usr/include/python%d*'%sys.version_info[0])
         Found = False
         for p in dir_list:
               if check_file('Python.h',dir=p):
@@ -1091,7 +1091,7 @@ class CoreInstall(object):
     def check_dbus(self):
         log.debug("Checking for dbus running and header files present (dbus-devel)...")
         return check_ps(['dbus-daemon'])  and \
-            len(locate_file_contains("dbus-message.h", '/usr/include', 'dbus_message_new_signal'))
+            len(locate_file_contains("dbus-message.h", '/@unixroot/usr/include', 'dbus_message_new_signal'))
 
 
     def check_cups_devel(self):
@@ -1109,12 +1109,12 @@ class CoreInstall(object):
 
 
     def check_cups_image(self):
-      return check_file("raster.h", "/usr/include/cups")
+      return check_file("raster.h", "/@unixroot/usr/include/cups")
 
 
     def check_hplip(self):
         log.debug("Checking for HPLIP...")
-        return locate_files('hplip.conf', '/etc/hp')
+        return locate_files('hplip.conf', '/@unixroot/etc/hp')
 
 
     def check_libtool(self):
@@ -1134,17 +1134,17 @@ class CoreInstall(object):
     def check_cupsddk(self):
         log.debug("Checking for cups-ddk...")
         # TODO: Compute these paths some way or another...
-        return check_file('media.defs', "/usr/share/cups/ppdc/")
+        return check_file('media.defs', "/@unixroot/usr/share/cups/ppdc/")
 
 
 
     def check_policykit(self):
         log.debug("Checking for PolicyKit...")
-        if check_file('PolicyKit.conf', "/etc/PolicyKit") and check_file('org.gnome.PolicyKit.AuthorizationManager.service', "/usr/share/dbus-1/services"):
+        if check_file('PolicyKit.conf', "/@unixroot/etc/PolicyKit") and check_file('org.gnome.PolicyKit.AuthorizationManager.service', "/@unixroot/usr/share/dbus-1/services"):
             return True
-        elif check_file('50-localauthority.conf', "/etc/polkit-1/localauthority.conf.d") and check_file('org.freedesktop.PolicyKit1.service', "/usr/share/dbus-1/system-services"):
+        elif check_file('50-localauthority.conf', "/@unixroot/etc/polkit-1/localauthority.conf.d") and check_file('org.freedesktop.PolicyKit1.service', "/@unixroot/usr/share/dbus-1/system-services"):
             return True
-        elif check_file('org.freedesktop.PolicyKit1.conf','/etc/dbus-1/system.d'):
+        elif check_file('org.freedesktop.PolicyKit1.conf','/@unixroot/etc/dbus-1/system.d'):
             return True
         else:
             return False
@@ -1185,7 +1185,7 @@ class CoreInstall(object):
 
     def check_hpaio(self):
         found = False
-        for path in ['/etc/sane.d/dll.conf','/etc/sane.d/dll.d/hpaio', '/etc/sane.d/dll.d/hplip']:
+        for path in ['/@unixroot/etc/sane.d/dll.conf','/@unixroot/etc/sane.d/dll.d/hpaio', '/@unixroot/etc/sane.d/dll.d/hplip']:
             log.debug("'Checking for hpaio' in '%s'..." % path)
             try:
                 f = open(path, 'r')
@@ -1214,12 +1214,12 @@ class CoreInstall(object):
         if pat.match(home_dir) is not None:
             usrlib_dir= pat.match(home_dir).group(1) + "lib/"
             if os.path.exists(usrlib_dir+'sane/libsane-hpaio.so.1'):
-                log.debug("'Updating hpaio' in '/etc/sane.d/dll.conf'...")
+                log.debug("'Updating hpaio' in '/@unixroot/etc/sane.d/dll.conf'...")
                 try:
-                    f = open('/etc/sane.d/dll.conf', 'r')
+                    f = open('/@unixroot/etc/sane.d/dll.conf', 'r')
                 except IOError:
-                    log.error("'/etc/sane.d/dll.conf' not found. Creating dll.conf file")
-                    cmd = self.passwordObj.getAuthCmd()%'touch /etc/sane.d/dll.conf'
+                    log.error("'/@unixroot/etc/sane.d/dll.conf' not found. Creating dll.conf file")
+                    cmd = self.passwordObj.getAuthCmd()%'touch /@unixroot/etc/sane.d/dll.conf'
                     log.debug("cmd=%s"%cmd)
                     utils.run(cmd, self.passwordObj)
                 else:
@@ -1232,19 +1232,19 @@ class CoreInstall(object):
                     f.close()
 
                 if not found:
-                    st = os.stat('/etc/sane.d/dll.conf')
-                    cmd= self.passwordObj.getAuthCmd()%'chmod 777 /etc/sane.d/dll.conf'
+                    st = os.stat('/@unixroot/etc/sane.d/dll.conf')
+                    cmd= self.passwordObj.getAuthCmd()%'chmod 777 /@unixroot/etc/sane.d/dll.conf'
                     log.debug("cmd=%s"%cmd)
                     utils.run(cmd, self.passwordObj)
                     try:
-                        f = open('/etc/sane.d/dll.conf', 'a+')
+                        f = open('/@unixroot/etc/sane.d/dll.conf', 'a+')
                     except IOError:
-                        log.error("'/etc/sane.d/dll.conf' not found. Creating dll.conf file")
+                        log.error("'/@unixroot/etc/sane.d/dll.conf' not found. Creating dll.conf file")
                     else:
                         f.write('hpaio')
                         f.close()
                     actv_permissions = st.st_mode &0o777
-                    cmd = 'chmod %o /etc/sane.d/dll.conf'%actv_permissions
+                    cmd = 'chmod %o /@unixroot/etc/sane.d/dll.conf'%actv_permissions
                     cmd= self.passwordObj.getAuthCmd()%cmd
                     log.debug("cmd=%s"%cmd)
                     utils.run(cmd, self.passwordObj)
@@ -1450,7 +1450,7 @@ class CoreInstall(object):
 
     def configure_html(self):
         configure_cmd = './configure'
-        configure_cmd += ' --prefix=/usr' 
+        configure_cmd += ' --prefix=/@unixroot/usr' 
         configure_cmd += ' --with-hpppddir=%s' % self.ppd_dir
 
         libdir_path = self.get_distro_ver_data('libdir_path',False)
@@ -1787,7 +1787,7 @@ class CoreInstall(object):
         # Reload DBUS configuration if distro supports it and PolicyKit
         # support installed
         if self.reload_dbus and self.selected_options['policykit']:
-            cmds.append(self.passwordObj.getAuthCmd() % "sh /etc/init.d/dbus reload")
+            cmds.append(self.passwordObj.getAuthCmd() % "sh /@unixroot/etc/init.d/dbus reload")
             log.debug("Will reload DBUS configuration for PolicyKit support")
 
         # Kill any running hpssd.py instance from a previous install
@@ -2012,7 +2012,7 @@ class CoreInstall(object):
             cnt += 1
 
         # removing Rules files
-        RULES_LIST_FULL = utils.expandList(RULES_LIST, '/etc/udev/rules.d')
+        RULES_LIST_FULL = utils.expandList(RULES_LIST, '/@unixroot/etc/udev/rules.d')
         for fl in RULES_LIST_FULL:
             utils.remove(fl, self.passwordObj, checkSudo)
 
@@ -2021,7 +2021,7 @@ class CoreInstall(object):
             utils.remove(fl , self.passwordObj, checkSudo)
 
         # removing (unused) hplip folder from other location 
-        cmd = 'find /usr -type d -name hplip'
+        cmd = 'find /@unixroot/usr -type d -name hplip'
         cmd = self.passwordObj.getAuthCmd() %cmd
         status, output=utils.run(cmd, self.passwordObj, checkSudo)
         if status == 0:
@@ -2033,7 +2033,7 @@ class CoreInstall(object):
         # removing all hplip extension libraries
         for ext_f in HPLIP_EXT_LIST:
             if ext_f:
-                cmd = 'find /usr -type f -name %s -delete'%ext_f
+                cmd = 'find /@unixroot/usr -type f -name %s -delete'%ext_f
                 cmd = self.passwordObj.getAuthCmd() %cmd
                 status,output = utils.run(cmd , self.passwordObj, checkSudo)
                 if status != 0:
@@ -2149,7 +2149,7 @@ class CoreInstall(object):
 
     def disable_SELinux(self, mode = INTERACTIVE_MODE):       # Move to utils
         ret_val = False
-        SELinux_file = '/etc/selinux/config'
+        SELinux_file = '/@unixroot/etc/selinux/config'
         if mode == INTERACTIVE_MODE:
             ok,user_input =tui.enter_choice("SELinux is currently enabled in your system. Device may not work properly. Do you want to disable SELinux?(y=yes, n=no*)",['y', 'n'], 'n')
             if ok and user_input != 'n':

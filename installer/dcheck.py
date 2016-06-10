@@ -103,7 +103,7 @@ def check_lib(lib, min_ver=0):
         log.debug("Not found.")
         return False
 
-def check_file(f, dir="/usr/include"):
+def check_file(f, dir="/@unixroot/usr/include"):
     log.debug("Searching for file '%s' in '%s'..." % (f, dir))
     for w in utils.walkFiles(dir, recurse=True, abs_paths=True, return_folders=False, pattern=f):
         log.debug("File found at '%s'" % w)
