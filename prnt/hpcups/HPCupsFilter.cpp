@@ -35,7 +35,11 @@
 #include <sys/wait.h>
 #include <sys/utsname.h>
 #include <time.h>
+#ifdef __OS2__
+#include "common/utils.h"
+#else
 #include "utils.h"
+#endif
 
 #define HP_FILE_VERSION_STR    "03.09.08.0"
 
@@ -437,7 +441,9 @@ DRIVER_ERROR HPCupsFilter::startPage (cups_page_header2_t *cups_header)
     strncpy(m_JA.user_name, m_argv[2], sizeof(m_JA.user_name)-1);
     strncpy(m_JA.host_name, uts_name.nodename, sizeof(m_JA.host_name)-1);
     strncpy(m_JA.os_name, uts_name.sysname, sizeof(m_JA.os_name)-1);
+#ifndef __OS2__
     getdomainname(m_JA.domain_name, sizeof(m_JA.domain_name) - 1);
+#endif
     int i = strlen(m_argv[0]) - 1;
     while (i >= 0 && m_argv[0][i] != '/') {
         i--;
@@ -542,7 +548,11 @@ int HPCupsFilter::StartPrintJob(int  argc, char *argv[])
         {
             dbglog("Page Stream Data Name: %s\n", argv[6] );
         }
+#ifdef __OS2__
+        if ((fd = open (argv[6], O_RDONLY|O_BINARY)) == -1)
+#else
         if ((fd = open (argv[6], O_RDONLY)) == -1)
+#endif
         {
             perror("ERROR: Unable to open raster file - ");
             return 1;

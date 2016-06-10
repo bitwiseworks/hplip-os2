@@ -98,7 +98,7 @@ libhpmud_la_SOURCES += io/hpmud/musb_libusb01.c
 libhpmud_la_LDFLAGS += -lusb
 else
 libhpmud_la_SOURCES += io/hpmud/musb.c 
-libhpmud_la_CFLAGS  += -I/usr/include/libusb-1.0
+libhpmud_la_CFLAGS  += -I/@unixroot/usr/include/libusb-1.0
 libhpmud_la_LDFLAGS += -lusb-1.0
 endif
 
@@ -275,6 +275,7 @@ pcardext_LTLIBRARIES = pcardext.la
 pcardext_la_LDFLAGS = -module -avoid-version
 pcardext_la_SOURCES = pcard/pcardext/pcardext.c pcard/fat.c
 pcardext_la_CFLAGS = -I$(PYTHONINCLUDEDIR)
+pcardext_la_LIBADD = -lpython2.7
 
 # prnt
 prntdir = $(hplipdir)/prnt
@@ -288,7 +289,7 @@ lib_LTLIBRARIES += libhpipp.la
 libhpipp_la_SOURCES = protocol/hp_ipp.c protocol/hp_ipp.h protocol/hp_ipp_i.h
 libhpipp_la_CFLAGS = -DCONFDIR=\"$(hplip_confdir)\"
 libhpipp_la_LDFLAGS = -version-info 0:1:0
-libhpipp_la_LIBADD = libhpmud.la
+libhpipp_la_LIBADD = -lcups libhpmud.la
 
 
 # cupsext
@@ -297,7 +298,7 @@ cupsext_LTLIBRARIES = cupsext.la
 cupsext_la_LDFLAGS = -module -avoid-version
 cupsext_la_SOURCES =  prnt/cupsext/cupsext.c prnt/cupsext/cupsext.h
 cupsext_la_CFLAGS = -I$(PYTHONINCLUDEDIR) -Iprotocol
-cupsext_la_LIBADD = -lcups libhpipp.la
+cupsext_la_LIBADD = -lpython2.7 -lcups libhpipp.la
 
 if SCAN_BUILD
 # scan
@@ -318,7 +319,7 @@ hpmudext_LTLIBRARIES = hpmudext.la
 hpmudext_la_LDFLAGS = -module -avoid-version
 hpmudext_la_SOURCES = io/mudext/hpmudext.c
 hpmudext_la_CFLAGS = -I$(PYTHONINCLUDEDIR)
-hpmudext_la_LIBADD = libhpmud.la
+hpmudext_la_LIBADD = -lpython2.7 libhpmud.la
 
 if NETWORK_BUILD
 hpmudext_la_LIBADD += libhpdiscovery.la
@@ -326,7 +327,7 @@ hpmudext_la_CFLAGS += -Iprotocol/discovery
 endif
 
 if !LIBUSB01_BUILD
-hpmudext_la_CFLAGS +=-I/usr/include/libusb-1.0 
+hpmudext_la_CFLAGS +=-I/@unixroot/usr/include/libusb-1.0 
 endif
 
 # ui (qt3)

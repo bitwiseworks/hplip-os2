@@ -138,11 +138,11 @@ for s in EXPECT_WORD_LIST:
 def get_cups_systemgroup_list():
     lis = []
     try:
-        fp=open('/etc/cups/cupsd.conf')
+        fp=open('/@unixroot/etc/cups/cupsd.conf')
     except IOError:
         try:
-            if "root" != grp.getgrgid(os.stat('/etc/cups/cupsd.conf').st_gid).gr_name:
-                return [grp.getgrgid(os.stat('/etc/cups/cupsd.conf').st_gid).gr_name]
+            if "root" != grp.getgrgid(os.stat('/@unixroot/etc/cups/cupsd.conf').st_gid).gr_name:
+                return [grp.getgrgid(os.stat('/@unixroot/etc/cups/cupsd.conf').st_gid).gr_name]
         except OSError:
             return lis
 
@@ -512,12 +512,12 @@ def which(command, return_full_path=False):
     if path_val:
         path = path_val.split(':')
 
-    path.append('/usr/bin')
-    path.append('/usr/local/bin')
+    path.append('/@unixroot/usr/bin')
+    path.append('/@unixroot/usr/local/bin')
     # Add these paths for Fedora
     path.append('/sbin')
-    path.append('/usr/sbin')
-    path.append('/usr/local/sbin')
+    path.append('/@unixroot/usr/sbin')
+    path.append('/@unixroot/usr/local/sbin')
 
     found_path = ''
     for p in path:

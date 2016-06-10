@@ -42,7 +42,11 @@
 #include "LJZjStream.h"
 #include "Utils.h"
 #include "hpjbig_wrapper.h"
+#ifdef __OS2__
+#include "common/utils.h"
+#else
 #include "utils.h"
+#endif
 
 #define ZJC_BAND_HEIGHT    100
 
@@ -741,13 +745,21 @@ DRIVER_ERROR LJZjStream::preProcessRasterData(cups_raster_t **ppcups_raster, cup
 	cupsRasterClose(odd_pages_raster);
 
 	//Now read even and odd pages rasters and then put into swaped raster 
+#ifdef __OS2__
+	if ((fdEven = open (hpEvenPagesFile, O_RDONLY|O_BINARY)) == -1) {
+#else
 	if ((fdEven = open (hpEvenPagesFile, O_RDONLY)) == -1) {
+#endif
 	    perror("ERROR: Unable to open evenpage raster file for reading.");
 		driver_error = SYSTEM_ERROR;
         goto bugout;
 	}
 
+#ifdef __OS2__
+	if ((fdOdd = open (hpOddPagesFile, O_RDONLY|O_BINARY)) == -1){
+#else
 	if ((fdOdd = open (hpOddPagesFile, O_RDONLY)) == -1){
+#endif
 	    perror("ERROR: Unable to open odd page raster file for writing. ");
 		driver_error = SYSTEM_ERROR;
         goto bugout;
@@ -809,7 +821,11 @@ DRIVER_ERROR LJZjStream::preProcessRasterData(cups_raster_t **ppcups_raster, cup
     }
 
 	//Now send swaped raster file further processing.
+#ifdef __OS2__
+	if ((fdSwaped = open (pSwapedPagesFileName, O_RDONLY|O_BINARY)) == -1){
+#else
 	if ((fdSwaped = open (pSwapedPagesFileName, O_RDONLY)) == -1){
+#endif
 	    perror("ERROR: Unable to open swaped pages raster file - ");
 		driver_error = SYSTEM_ERROR;
         goto bugout;

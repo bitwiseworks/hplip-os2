@@ -738,7 +738,11 @@ int main(int argc, char *argv[])
    }
    else
    {
+#ifdef __OS2__
+      if ((fd = open(argv[6], O_RDONLY|O_BINARY)) < 0)  /* use specified file */ 
+#else
       if ((fd = open(argv[6], O_RDONLY)) < 0)  /* use specified file */ 
+#endif
       {
          BUG("ERROR: unable to open print file %s: %m\n", argv[6]);
          exit (1);

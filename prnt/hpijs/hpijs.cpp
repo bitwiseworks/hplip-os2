@@ -77,7 +77,11 @@ void setLogLevel(UXServices *pSS, char*user_name)
     FILE    *fp;
     char    str[258];
     char    *p;
+#ifdef __OS2__
+    fp = fopen ("/@unixroot/etc/cups/cupsd.conf", "rb");
+#else
     fp = fopen ("/etc/cups/cupsd.conf", "r");
+#endif
     if (fp == NULL)
         return;
     while (!feof (fp))

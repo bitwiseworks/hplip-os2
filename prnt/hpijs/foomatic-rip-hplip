@@ -44,10 +44,10 @@ my $ripversion='$Revision=3.0.2.131$';
 # possibly other stuff.	 The default path is often fine on Linux, but
 # may not be on other systems.
 #
-my $execpath = "/usr/bin:/usr/local/bin:/usr/bin:/bin";
+my $execpath = "/@unixroot/usr/bin:/@unixroot/usr/local/bin:/@unixroot/usr/bin:/bin";
 
 # CUPS raster drivers are searched here
-my $cupsfilterpath = "/usr/lib/cups/filter:/usr/local/lib/cups/filter:/usr/local/libexec/cups/filter:/opt/cups/filter:/usr/lib/cups/filter";
+my $cupsfilterpath = "/@unixroot/usr/lib/cups/filter:/@unixroot/usr/local/lib/cups/filter:/@unixroot/usr/local/libexec/cups/filter:/opt/cups/filter:/@unixroot/usr/lib/cups/filter";
 
 # Location of the configuration file "filter.conf", this file can be
 # used to change the settings of foomatic-rip without editing
@@ -55,8 +55,8 @@ my $cupsfilterpath = "/usr/lib/cups/filter:/usr/local/lib/cups/filter:/usr/local
 # of the directory which contains the configuration file, usually
 # "/etc/foomatic".
 # Some versions of configure do not fully expand $sysconfdir
-my $prefix = "/usr";
-my $configpath = "/etc/foomatic";
+my $prefix = "/@unixroot/usr";
+my $configpath = "/@unixroot/etc/foomatic";
 
 # For the stuff below, the settings in the configuration file have priority.
 
@@ -761,7 +761,7 @@ my( $cups_jobid, $cups_user, $cups_jobtitle, $cups_copies, $cups_options,
     $cups_filename );
 if ($spooler eq 'cups') {
 
-    # Use CUPS font path ("FontPath" in /etc/cups/cupsd.conf)
+    # Use CUPS font path ("FontPath" in /@unixroot/etc/cups/cupsd.conf)
     if ($ENV{'CUPS_FONTPATH'}) {
 	$ENV{'GS_LIB'} = $ENV{'CUPS_FONTPATH'} .
 	    ($ENV{'GS_LIB'} ? ":$ENV{'GS_LIB'}" : "");
@@ -1013,23 +1013,23 @@ if (($spooler eq 'direct') || ($spooler eq 'cps') || ($spooler eq 'pdq')) {
 	    $ppdfile = $printer;
 	# CPS can have the PPD in the spool directory
 	} elsif (($spooler eq 'cps') &&
-		 (-r "/var/spool/lpd/${printer}/${printer}.ppd")) {
-	    $ppdfile = "/var/spool/lpd/${printer}/${printer}.ppd";
+		 (-r "/@unixroot/var/spool/lpd/${printer}/${printer}.ppd")) {
+	    $ppdfile = "/@unixroot/var/spool/lpd/${printer}/${printer}.ppd";
 	} elsif (($spooler eq 'cps') &&
-		 (-r "/var/local/spool/lpd/${printer}/${printer}.ppd")) {
-	    $ppdfile = "/var/local/spool/lpd/${printer}/${printer}.ppd";
+		 (-r "/@unixroot/var/local/spool/lpd/${printer}/${printer}.ppd")) {
+	    $ppdfile = "/@unixroot/var/local/spool/lpd/${printer}/${printer}.ppd";
 	} elsif (($spooler eq 'cps') &&
-		 (-r "/var/local/lpd/${printer}/${printer}.ppd")) {
-	    $ppdfile = "/var/local/lpd/${printer}/${printer}.ppd";
+		 (-r "/@unixroot/var/local/lpd/${printer}/${printer}.ppd")) {
+	    $ppdfile = "/@unixroot/var/local/lpd/${printer}/${printer}.ppd";
 	} elsif (($spooler eq 'cps') &&
-		 (-r "/var/spool/lpd/${printer}.ppd")) {
-	    $ppdfile = "/var/spool/lpd/${printer}.ppd";
+		 (-r "/@unixroot/var/spool/lpd/${printer}.ppd")) {
+	    $ppdfile = "/@unixroot/var/spool/lpd/${printer}.ppd";
 	} elsif (($spooler eq 'cps') &&
-		 (-r "/var/local/spool/lpd/${printer}.ppd")) {
-	    $ppdfile = "/var/local/spool/lpd/${printer}.ppd";
+		 (-r "/@unixroot/var/local/spool/lpd/${printer}.ppd")) {
+	    $ppdfile = "/@unixroot/var/local/spool/lpd/${printer}.ppd";
 	} elsif (($spooler eq 'cps') &&
-		 (-r "/var/local/lpd/${printer}.ppd")) {
-	    $ppdfile = "/var/local/lpd/${printer}.ppd";
+		 (-r "/@unixroot/var/local/lpd/${printer}.ppd")) {
+	    $ppdfile = "/@unixroot/var/local/lpd/${printer}.ppd";
 	} elsif (-r "${printer}.ppd") { # current dir
 	    $ppdfile = "${printer}.ppd";
 	} elsif (-r "$user_default_path/${printer}.ppd") { # user dir
@@ -1038,14 +1038,14 @@ if (($spooler eq 'direct') || ($spooler eq 'cps') || ($spooler eq 'pdq')) {
 	    $ppdfile = "$configpath/direct/${printer}.ppd";
 	} elsif (-r "$configpath/${printer}.ppd") { # system dir
 	    $ppdfile = "$configpath/${printer}.ppd";
-	} elsif (-r "/etc/cups/ppd/${printer}.ppd") { # CUPS config dir
-	    $ppdfile = "/etc/cups/ppd/${printer}.ppd";
-	} elsif (-r "/usr/local/etc/cups/ppd/${printer}.ppd") {
-	    $ppdfile = "/usr/local/etc/cups/ppd/${printer}.ppd";
-	} elsif (-r "/usr/share/ppr/PPDFiles/${printer}.ppd") { # PPR PPDs
-	    $ppdfile = "/usr/share/ppr/PPDFiles/${printer}.ppd";
-	} elsif (-r "/usr/local/share/ppr/PPDFiles/${printer}.ppd") {
-	    $ppdfile = "/usr/local/share/ppr/PPDFiles/${printer}.ppd";
+	} elsif (-r "/@unixroot/etc/cups/ppd/${printer}.ppd") { # CUPS config dir
+	    $ppdfile = "/@unixroot/etc/cups/ppd/${printer}.ppd";
+	} elsif (-r "/@unixroot/usr/local/etc/cups/ppd/${printer}.ppd") {
+	    $ppdfile = "/@unixroot/usr/local/etc/cups/ppd/${printer}.ppd";
+	} elsif (-r "/@unixroot/usr/share/ppr/PPDFiles/${printer}.ppd") { # PPR PPDs
+	    $ppdfile = "/@unixroot/usr/share/ppr/PPDFiles/${printer}.ppd";
+	} elsif (-r "/@unixroot/usr/local/share/ppr/PPDFiles/${printer}.ppd") {
+	    $ppdfile = "/@unixroot/usr/local/share/ppr/PPDFiles/${printer}.ppd";
 	} else {
 	    rip_die ("There is no readable PPD file for the printer " .
 		     "$printer, is it configured?",

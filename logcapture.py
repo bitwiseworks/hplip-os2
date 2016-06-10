@@ -37,12 +37,12 @@ from base.sixext import to_string_utf8
 from subprocess import Popen, PIPE
 from installer.core_install import *
 
-CUPS_FILE='/etc/cups/cupsd.conf'
-CUPS_BACKUP_FILE='/etc/cups/cupsd.conf_orginal'
+CUPS_FILE='/@unixroot/etc/cups/cupsd.conf'
+CUPS_BACKUP_FILE='/@unixroot/etc/cups/cupsd.conf_orginal'
 LOG_FOLDER_PATH='./'
 LOG_FOLDER_NAME='hplip_troubleshoot_logs'
 LOG_FILES=LOG_FOLDER_PATH + LOG_FOLDER_NAME
-TMP_DIR = "/var/spool/cups/tmp"
+TMP_DIR = "/@unixroot/var/spool/cups/tmp"
 USER_NAME =""
 USERS={}
 ################ is_journal() function ##############
@@ -86,8 +86,8 @@ def enable_log():
            cmd = os.path.join(utils.which('service'), 'service')+" cups restart"
         elif utils.which('systemctl'):
            cmd = os.path.join(utils.which('systemctl'), 'systemctl')+" restart %s.service"%service_name
-        elif os.path.exists('/etc/init.d/cups'):
-           cmd = "/etc/init.d/cups restart"
+        elif os.path.exists('/@unixroot/etc/init.d/cups'):
+           cmd = "/@unixroot/etc/init.d/cups restart"
         else:
            log.error("service command not found.. Please restart cups manually..")
 
@@ -122,8 +122,8 @@ def restore_loglevels():
        cmd = os.path.join(utils.which('service'), 'service')+" cups restart"
     elif utils.which('systemctl'):
        cmd = os.path.join(utils.which('systemctl'), 'systemctl')+" restart %s.service"%service_name
-    elif os.path.exists('/etc/init.d/cups'):
-       cmd = "/etc/init.d/cups restart"
+    elif os.path.exists('/@unixroot/etc/init.d/cups'):
+       cmd = "/@unixroot/etc/init.d/cups restart"
     else:
        log.error("service command not found.. Please restart cups manually..")
 
@@ -273,9 +273,9 @@ if not is_journal():
         sys.exit(1)
 
     if ok and user_input == "y":
-        backup_clearLog('/var/log/syslog')
-        backup_clearLog('/var/log/messages')
-        backup_clearLog('/var/log/cups/error_log')
+        backup_clearLog('/@unixroot/var/log/syslog')
+        backup_clearLog('/@unixroot/var/log/messages')
+        backup_clearLog('/@unixroot/var/log/cups/error_log')
 
 
 
@@ -298,20 +298,20 @@ if sts != 0:
 
 log.debug("Copying logs to Temporary folder =%s"%LOG_FILES)
 if not is_journal():
-    if os.path.exists('/var/log/syslog'):
-        sts,out = utils.run ('cp -f /var/log/syslog %s/syslog.log'%LOG_FILES)
+    if os.path.exists('/@unixroot/var/log/syslog'):
+        sts,out = utils.run ('cp -f /@unixroot/var/log/syslog %s/syslog.log'%LOG_FILES)
         if sts != 0:
-           log.error("Failed to capture %s log file."%("/var/log/syslog"))
+           log.error("Failed to capture %s log file."%("/@unixroot/var/log/syslog"))
 
-    if os.path.exists('/var/log/messages'):
-        sts,out = utils.run('cp -f /var/log/messages %s/messages.log'%LOG_FILES)
+    if os.path.exists('/@unixroot/var/log/messages'):
+        sts,out = utils.run('cp -f /@unixroot/var/log/messages %s/messages.log'%LOG_FILES)
         if sts != 0:
-           log.error("Failed to capture %s log file."%("/var/log/messages"))
+           log.error("Failed to capture %s log file."%("/@unixroot/var/log/messages"))
 
-    if os.path.exists('/var/log/cups/error_log'):
-        sts,out = utils.run('cp -f /var/log/cups/error_log %s/cups_error_log.log'%LOG_FILES)
+    if os.path.exists('/@unixroot/var/log/cups/error_log'):
+        sts,out = utils.run('cp -f /@unixroot/var/log/cups/error_log %s/cups_error_log.log'%LOG_FILES)
         if sts != 0:
-           log.error("Failed to capture %s log file."%("/var/log/cups/error_log"))
+           log.error("Failed to capture %s log file."%("/@unixroot/var/log/cups/error_log"))
 else:
     log.debug("Collecting cups logs from system journal")
     cmd = "journalctl -u cups.service -e --since '%s' " %log_time

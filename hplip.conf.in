@@ -5,7 +5,7 @@ version=@VERSION@
 
 [dirs]
 home=@abs_datadir@/hplip
-run=/var/run
+run=/@unixroot/var/run
 ppd=@abs_hpppddir@
 ppdbase=@abs_ppddir@
 doc=@abs_docdir@
@@ -14,7 +14,7 @@ icon=@icondir@
 cupsbackend=@cupsbackenddir@
 cupsfilter=@cupsfilterdir@
 drv=@abs_drvdir@
-bin=/usr/bin
+bin=/@unixroot/usr/bin
 apparmor=@apparmordir@
 # Following values are determined at configure time and cannot be changed.
 [configure]

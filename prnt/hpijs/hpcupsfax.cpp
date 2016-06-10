@@ -94,7 +94,11 @@ static void GetLogLevel ()
     FILE    *fp;
     char    str[258];
     char    *p;
+#ifdef __OS2__
+    fp = fopen ("/@nixroot/etc/cups/cupsd.conf", "rb");
+#else
     fp = fopen ("/etc/cups/cupsd.conf", "r");
+#endif
     if (fp == NULL)
         return;
     while (!feof (fp))
@@ -665,7 +669,11 @@ int main (int argc, char **argv)
 
     if (argc == 7)
     {
+#ifdef __OS2__
+        if ((fd = open (argv[6], O_RDONLY|O_BINARY)) == -1)
+#else
         if ((fd = open (argv[6], O_RDONLY)) == -1)
+#endif
         {
             BUG ("ERROR: Unable to open raster file %s\n", argv[6]);
             return 1;

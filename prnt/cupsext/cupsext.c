@@ -949,7 +949,11 @@ PyObject * openPPD( PyObject * self, PyObject * args )
         goto bailout;
     }
 
+#ifdef __OS2__
+    if ( ( file = fopen( g_ppd_file, "rb" )) == NULL )
+#else
     if ( ( file = fopen( g_ppd_file, "r" )) == NULL )
+#endif
     {
         unlink(g_ppd_file);
         g_ppd_file = NULL;

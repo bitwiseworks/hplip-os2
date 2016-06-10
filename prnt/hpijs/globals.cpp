@@ -251,7 +251,11 @@ void *LoadPlugin (const char *szPluginName)
     void    *ptemp = NULL;
     char    *p = NULL;
     int     bFound = 0;
+#ifdef __OS2__
+    if ((fp = fopen ("/@unixroot/etc/hp/hplip.conf", "rb")) == NULL)
+#else
     if ((fp = fopen ("/etc/hp/hplip.conf", "r")) == NULL)
+#endif
     {
         return NULL;
     }

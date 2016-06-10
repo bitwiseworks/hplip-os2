@@ -197,10 +197,10 @@ def getAllowableMIMETypes():
     paths = []
     allowable_mime_types = []
     files = []
-    if os.path.exists("/etc/cups"):
-        paths.append("/etc/cups/*.convs")
-    if os.path.exists("/usr/share/cups/mime"):
-        paths.append("/usr/share/cups/mime/*.convs")
+    if os.path.exists("/@unixroot/etc/cups"):
+        paths.append("/@unixroot/etc/cups/*.convs")
+    if os.path.exists("/@unixroot/usr/share/cups/mime"):
+        paths.append("/@unixroot/usr/share/cups/mime/*.convs")
     for path in paths:
         files.extend(glob.glob(path))
     for f in files:
@@ -262,10 +262,10 @@ def getSystemPPDs():
         log.debug("(CUPS 1.2.x) Getting list of PPDs using CUPS_GET_PPDS...")
         ppd_dict = cupsext.getPPDList()
         cups_ppd_path = getPPDPath() # usually /usr/share/cups/model
-        foomatic_ppd_path = sys_conf.get('dirs', 'ppdbase', '/usr/share/ppd')
+        foomatic_ppd_path = sys_conf.get('dirs', 'ppdbase', '/@unixroot/usr/share/ppd')
 
         if not foomatic_ppd_path or not os.path.exists(foomatic_ppd_path):
-            foomatic_ppd_path = '/usr/share/ppd'
+            foomatic_ppd_path = '/@unixroot/usr/share/ppd'
 
         log.debug("CUPS PPD base path = %s" % cups_ppd_path)
         log.debug("Foomatic PPD base path = %s" % foomatic_ppd_path)
@@ -604,7 +604,7 @@ def getFaxPPDFile(mq, model):
 
 
 def getErrorLogLevel():
-    cups_conf = '/etc/cups/cupsd.conf'
+    cups_conf = '/@unixroot/etc/cups/cupsd.conf'
     try:
         f = open(cups_conf, 'r')
     except OSError:
@@ -627,7 +627,7 @@ def getPrintJobErrorLog(job_id, max_lines=1000, cont_interval=5):
     ret = []
     s = '[Job %d]' % job_id
     #level = getErrorLogLevel()
-    cups_conf = '/var/log/cups/error_log'
+    cups_conf = '/@unixroot/var/log/cups/error_log'
 
     #if level in ('debug', 'debug2'):
     if 1:

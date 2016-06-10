@@ -31,6 +31,10 @@
 
 #ifdef APDK_LJZJS_COLOR
 
+#ifdef __OS2__
+#define _GNU_SOURCE
+#endif
+
 #include "header.h"
 #include "io_defs.h"
 #include "printerproxy.h"

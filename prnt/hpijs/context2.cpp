@@ -29,6 +29,9 @@
 \*****************************************************************************/
 
 // PrintContext
+#ifdef __OS2__
+#define _GNU_SOURCE
+#endif
 
 #include "header.h"
 #include "pmselect.h"

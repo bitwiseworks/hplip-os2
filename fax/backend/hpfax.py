@@ -49,7 +49,7 @@ PIPE_BUF = 4096
 
 job_id = 0
 pid = os.getpid()
-config_file = '/etc/hp/hplip.conf'
+config_file = '/@unixroot/etc/hp/hplip.conf'
 home_dir = ''
 
 
@@ -68,7 +68,7 @@ if os.path.exists(config_file):
         bug("Error setting home directory: home= under [dirs] not found.")
         sys.exit(1)
 else:
-    bug("Error setting home directory: /etc/hp/hplip.conf not found")
+    bug("Error setting home directory: /@unixroot/etc/hp/hplip.conf not found")
     sys.exit(1)
 
 if not home_dir or not os.path.exists(home_dir):

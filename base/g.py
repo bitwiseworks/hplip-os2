@@ -143,7 +143,7 @@ class ConfigBase(object):
     def write(self):
         if self.filename is not None:
             filename = self.filename
-            if filename.startswith("/root/") or filename.startswith("/etc/"):
+            if filename.startswith("/root/") or filename.startswith("/etc/") or filename.startswith("/@unixroot/etc/"):
                 # Don't try writing a file in root's home directory or
                 # the system-wide config file.
                 # See bug #479178.
@@ -182,16 +182,16 @@ class ConfigBase(object):
         
 class SysConfig(ConfigBase):
     def __init__(self):
-        ConfigBase.__init__(self, '/etc/hp/hplip.conf')
+        ConfigBase.__init__(self, '/@unixroot/etc/hp/hplip.conf')
 
 
 class State(ConfigBase):
     def __init__(self):
-        if not os.path.exists('/var/lib/hp/') and os.geteuid() == 0:
-            os.makedirs('/var/lib/hp/')
-            cmd = 'chmod 755 /var/lib/hp/'
+        if not os.path.exists('/@unixroot/var/lib/hp/') and os.geteuid() == 0:
+            os.makedirs('/@unixroot/var/lib/hp/')
+            cmd = 'chmod 755 /@unixroot/var/lib/hp/'
             os_utils.execute(cmd)
-        ConfigBase.__init__(self, '/var/lib/hp/hplip.state')
+        ConfigBase.__init__(self, '/@unixroot/var/lib/hp/hplip.state')
 
 
 class UserConfig(ConfigBase):
@@ -283,7 +283,7 @@ prop.max_message_len = 8192
 prop.max_message_read = 65536
 prop.read_timeout = 90
 
-prop.ppd_search_path = '/usr/share;/usr/local/share;/usr/lib;/usr/local/lib;/usr/libexec;/opt;/usr/lib64'
+prop.ppd_search_path = '/@unixroot/usr/share;/@unixroot/usr/local/share;/@unixroot/usr/lib;/@unixroot/usr/local/lib;/@unixroot/usr/libexec;/opt;/@unixroot/usr/lib64'
 prop.ppd_search_pattern = 'HP-*.ppd.*'
 prop.ppd_download_url = 'http://www.linuxprinting.org/ppd-o-matic.cgi'
 prop.ppd_file_suffix = '-hpijs.ppd'
@@ -343,7 +343,7 @@ def check_extension_module_env(ext_mod):
     else :
         python_ver = 2
 
-    for dirpath, dirname, filenames in os.walk('/usr/lib/'):    #find the .so path
+    for dirpath, dirname, filenames in os.walk('/@unixroot/usr/lib/'):    #find the .so path
         if ext_mod_so in filenames:
             ext_path = dirpath
             flag = 1

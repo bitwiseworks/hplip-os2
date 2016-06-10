@@ -61,11 +61,11 @@ def running_as_root():
     return os.geteuid() == 0
 
 def restart_cups():
-    if os.path.exists('/etc/init.d/cups'):
-        return '/etc/init.d/cups restart'
+    if os.path.exists('/@unixroot/etc/init.d/cups'):
+        return '/@unixroot/etc/init.d/cups restart'
 
-    elif os.path.exists('/etc/init.d/cupsys'):
-        return '/etc/init.d/cupsys restart'
+    elif os.path.exists('/@unixroot/etc/init.d/cupsys'):
+        return '/@unixroot/etc/init.d/cupsys restart'
 
     else:
         return 'killall -HUP cupsd'
@@ -179,13 +179,13 @@ def start_service( service_name, passwordObj):
         else:
             log.error("Fail to start %s service, please start %s service manually."%(service_name,service_name))
 
-    elif os.path.exists('/etc/init.d/%s'%service_name):
-        cmd_status = passwordObj.getAuthCmd()%('/etc/init.d/%s status'%service_name)
+    elif os.path.exists('/@unixroot/etc/init.d/%s'%service_name):
+        cmd_status = passwordObj.getAuthCmd()%('/@unixroot/etc/init.d/%s status'%service_name)
         log.debug(cmd_status)
         sts,out = utils.run(cmd_status, passwordObj, "Need authentication to get %s service status"%service_name)
         if sts ==0:
             if 'stop' in out or 'inactive' in out:
-                cmd_start = passwordObj.getAuthCmd()%('/etc/init.d/%s start'%service_name)
+                cmd_start = passwordObj.getAuthCmd()%('/@unixroot/etc/init.d/%s start'%service_name)
                 log.debug("cmd_start=%s"%cmd_start)
                 sts,out = utils.run(cmd_start, passwordObj, "Need authentication to start/restart %s service"%service_name)
                 if sts ==0:

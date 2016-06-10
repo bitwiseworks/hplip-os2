@@ -37,7 +37,11 @@
 #include "hpjbig_wrapper.h"
 #include <dlfcn.h>
 #include "Utils.h"
+#ifdef __OS2__
+#include "common/utils.h"
+#else
 #include "utils.h"
+#endif
 
 extern "C"
 {

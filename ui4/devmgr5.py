@@ -1023,7 +1023,7 @@ class DevMgr5(QMainWindow,  Ui_MainWindow):
                     return
 
                 hplip_conf = configparser.ConfigParser()
-                fp = open("/etc/hp/hplip.conf", "r")
+                fp = open("/@unixroot/etc/hp/hplip.conf", "r")
                 hplip_conf.readfp(fp)
                 fp.close()
 

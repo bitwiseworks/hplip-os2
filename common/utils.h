@@ -24,7 +24,11 @@
 #define SCAN_PLUGIN_SOAPHT "bb_soapht.so"
 #define SCAN_PLUGIN_ESCL "bb_escl.so"
 
+#ifdef __OS2__
+#define HPLIP_PLUGIN_STATE  "/@unixroot/var/lib/hp/hplip.state"
+#else
 #define HPLIP_PLUGIN_STATE  "/var/lib/hp/hplip.state"
+#endif
 #define CUPS_TMP_DIR   getenv("TMPDIR") ? : getenv("HOME") ?:"/tmp"
 
 enum UTILS_CONF_RESULT
