@@ -620,7 +620,7 @@ if FULL_BUILD
 #	   Install fax support.
 	if [ "$(fax_build)" = "yes" ]; then \
 	   mv $(DESTDIR)$(hpfaxdir)/hpfax.py $(DESTDIR)$(hpfaxdir)/hpfax; \
-	   chmod 700 $(DESTDIR)$(hpfaxdir)/hpfax; \
+	   chmod 700 $(DESTDIR)$(hpfaxdir)/hpfax$(EXEEXT); \
 	fi
 
 	if [ "$(apparmor_build)" = "yes" ];then \
@@ -629,7 +629,7 @@ if FULL_BUILD
 	fi
 
 #       Make backend run as root.
-	chmod 700 $(DESTDIR)$(hpdir)/hp
+	chmod 700 $(DESTDIR)$(hpdir)/hp$(EXEEXT)
 
 #AppArmor
 
