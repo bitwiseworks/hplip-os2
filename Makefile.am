@@ -7,6 +7,10 @@ INCLUDES = -Iip -Iio/hpmud -Iscan/sane -Iprnt/hpijs -Icommon/
 CFLAGS+= -DCONFDIR=\"$(hplip_confdir)\"
 CXXFLAGS+= -DCONFDIR=\"$(hplip_confdir)\"
 
+VENDOR ?=community
+BUILD_INFO=\#\#1\#\# $(shell date +'%d %b %Y %H:%M:%S')     $(shell uname -n)
+BUILDLEVEL_INFO=@\#$(VENDOR):$(VERSION)\#@$(BUILD_INFO)::::0::
+
 hplipdir = $(datadir)/hplip
 apparmordir = /@unixroot/etc/apparmor.d
 docdir = $(hpdocdir)
@@ -57,7 +61,7 @@ libsane_hpaio_la_SOURCES = scan/sane/hpaio.c scan/sane/mfpdtf.c scan/sane/pml.c 
 if DARWIN_BUILD
 libsane_hpaio_la_LDFLAGS = -module -framework CoreFoundation -version-info 1:0:0
 else
-libsane_hpaio_la_LDFLAGS = -version-info 1:0:0
+libsane_hpaio_la_LDFLAGS = -version-info 1:0:0 -buildlevel '$(BUILDLEVEL_INFO)'
 endif
 # The following is a interlibrary dependency that must be compiled first.
 libsane_hpaio_la_LIBADD = libhpip.la libhpmud.la libhpipp.la $(DBUS_LIBS) -lcups -ldl
@@ -76,7 +80,7 @@ if NETWORK_BUILD
 lib_LTLIBRARIES += libhpdiscovery.la
 libhpdiscovery_la_SOURCES = protocol/discovery/mdns.c protocol/discovery/mdns.h
 libhpdiscovery_la_CFLAGS  = -DCONFDIR=\"$(hplip_confdir)\"
-libhpdiscovery_la_LDFLAGS = -version-info 0:1:0
+libhpdiscovery_la_LDFLAGS = -version-info 0:1:0 -buildlevel '$(BUILDLEVEL_INFO)'
 libhpdiscovery_la_LIBADD  = -l$(SNMPLIB) -lcrypto
 
 
@@ -87,7 +91,7 @@ endif
 MUDNAME=hpmud
 lib_LTLIBRARIES += libhpmud.la
 libhpmud_la_CFLAGS  = -DMUDNAME=\"$(MUDNAME)\" -DCONFDIR=\"$(hplip_confdir)\" -Iprotocol
-libhpmud_la_LDFLAGS = -version-info 0:6:0 -lpthread -ldl 
+libhpmud_la_LDFLAGS = -version-info 0:6:0 -lpthread -ldl -buildlevel '$(BUILDLEVEL_INFO)'
 libhpmud_la_SOURCES = io/hpmud/hpmud.c io/hpmud/mlc.c io/hpmud/model.c io/hpmud/pml.c \
 	  io/hpmud/hpmud.h io/hpmud/hpmudi.h io/hpmud/list.h io/hpmud/mlc.h io/hpmud/pml.h io/hpmud/dot4.c \
 	  io/hpmud/dot4.h io/hpmud/jd.c io/hpmud/jd.h io/hpmud/pp.c io/hpmud/pp.h io/hpmud/musb.h \
@@ -95,7 +99,7 @@ libhpmud_la_SOURCES = io/hpmud/hpmud.c io/hpmud/mlc.c io/hpmud/model.c io/hpmud/
 
 if LIBUSB01_BUILD
 libhpmud_la_SOURCES += io/hpmud/musb_libusb01.c 
-libhpmud_la_LDFLAGS += -lusb
+libhpmud_la_LDFLAGS += -lusb -buildlevel
 else
 libhpmud_la_SOURCES += io/hpmud/musb.c 
 libhpmud_la_CFLAGS  += -I/@unixroot/usr/include/libusb-1.0
@@ -112,7 +116,7 @@ endif
 
 # ip library
 lib_LTLIBRARIES += libhpip.la
-libhpip_la_LDFLAGS = -version-info 0:1:0
+libhpip_la_LDFLAGS = -version-info 0:1:0 -buildlevel '$(BUILDLEVEL_INFO)'
 libhpip_la_LIBADD = -lm
 libhpip_la_SOURCES = ip/xconvolve.c ip/xfax.c ip/xgrayout.c ip/xjpg_dct.c ip/xjpg_fix.c ip/xpad.c ip/xrotate.c ip/xskel.c ip/xtiff.c \
 	ip/ipmain.c ip/xchgbpp.c ip/xcrop.c ip/xgamma.c ip/xjpg_dec.c ip/xjpg_huf.c ip/xpcx.c ip/xsaturation.c ip/xtable.c ip/xtonemap.c \
@@ -272,7 +276,7 @@ dist_pcard_DATA = pcard/__init__.py pcard/photocard.py
 # pcardext
 pcardextdir = $(pyexecdir)
 pcardext_LTLIBRARIES = pcardext.la
-pcardext_la_LDFLAGS = -module -avoid-version
+pcardext_la_LDFLAGS = -module -avoid-version -buildlevel '$(BUILDLEVEL_INFO)'
 pcardext_la_SOURCES = pcard/pcardext/pcardext.c pcard/fat.c
 pcardext_la_CFLAGS = -I$(PYTHONINCLUDEDIR)
 pcardext_la_LIBADD = -lpython2.7
@@ -288,14 +292,14 @@ lib_LTLIBRARIES += libhpipp.la
 #hpipp_la_LDFLAGS = -module -avoid-version
 libhpipp_la_SOURCES = protocol/hp_ipp.c protocol/hp_ipp.h protocol/hp_ipp_i.h
 libhpipp_la_CFLAGS = -DCONFDIR=\"$(hplip_confdir)\"
-libhpipp_la_LDFLAGS = -version-info 0:1:0
+libhpipp_la_LDFLAGS = -version-info 0:1:0 -buildlevel '$(BUILDLEVEL_INFO)'
 libhpipp_la_LIBADD = -lcups libhpmud.la
 
 
 # cupsext
 cupsextdir = $(pyexecdir)
 cupsext_LTLIBRARIES = cupsext.la
-cupsext_la_LDFLAGS = -module -avoid-version
+cupsext_la_LDFLAGS = -module -avoid-version -buildlevel '$(BUILDLEVEL_INFO)'
 cupsext_la_SOURCES =  prnt/cupsext/cupsext.c prnt/cupsext/cupsext.h
 cupsext_la_CFLAGS = -I$(PYTHONINCLUDEDIR) -Iprotocol
 cupsext_la_LIBADD = -lpython2.7 -lcups libhpipp.la
@@ -308,7 +312,7 @@ dist_scan_DATA = scan/__init__.py scan/sane.py
 # scanext
 scanextdir = $(pyexecdir)
 scanext_LTLIBRARIES = scanext.la
-scanext_la_LDFLAGS = -module -avoid-version -lsane
+scanext_la_LDFLAGS = -module -avoid-version -lsane -buildlevel '$(BUILDLEVEL_INFO)'
 scanext_la_SOURCES =  scan/scanext/scanext.c
 scanext_la_CFLAGS = -I$(PYTHONINCLUDEDIR)
 endif
@@ -316,7 +320,7 @@ endif
 # hpmudext
 hpmudextdir = $(pyexecdir)
 hpmudext_LTLIBRARIES = hpmudext.la
-hpmudext_la_LDFLAGS = -module -avoid-version
+hpmudext_la_LDFLAGS = -module -avoid-version -buildlevel '$(BUILDLEVEL_INFO)'
 hpmudext_la_SOURCES = io/mudext/hpmudext.c
 hpmudext_la_CFLAGS = -I$(PYTHONINCLUDEDIR)
 hpmudext_la_LIBADD = -lpython2.7 libhpmud.la
