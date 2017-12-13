@@ -267,9 +267,13 @@ except ValueError:
     prop.installed_version_int = 0
 
 prop.home_dir = sys_conf.get('dirs', 'home', os.path.realpath(os.path.normpath(os.getcwd())))
-prop.username = pwd.getpwuid(os.getuid())[0]
-pdb = pwd.getpwnam(prop.username)
-prop.userhome = pdb[5]
+if os.name == 'os2':
+    prop.username = os.getenv("USER")
+    prop.userhome = os.getenv("HOME")
+else:
+    prop.username = pwd.getpwuid(os.getuid())[0]
+    pdb = pwd.getpwnam(prop.username)
+    prop.userhome = pdb[5]
 
 prop.history_size = 50
 
