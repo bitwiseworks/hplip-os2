@@ -49,10 +49,13 @@ TYPE_URI = TYPE_STR # (7) not used (yet)
 TYPE_DATE = 8  # format: mm/dd/yyyy
 
 
+FAMILY_CLASSES = ["PCL3-Class1","PCL3-Class1A","PCL3-Class1B","PCL3-Class2" , "PCL3-Class3", "PCL3-Class3A","PCL3-Class3B","PCLM","PCL4-Class1","LJ-Class1","LJ-Class2","LJ-Class3","LJ-Class4","LJ-Class4A","LJ-Class5","LJ-Class6"]
+
 TECH_CLASSES = [
     "Undefined", # This will show an error (and its the default)
     "Unsupported", # This is for unsupported models, and it will not show an error
     "Postscript",
+	"PDF",
     "DJGenericVIP",
     #"PSB9100", not used on HPLIP
     "LJMono",
@@ -108,7 +111,9 @@ TECH_CLASSES = [
     "Copperhead12",
     "CopperheadIPH",
     "CopperheadIPH15",
+    "CopperheadIPH17",
     "PyramidRefresh15",
+    "PyramidRefresh17",
     "Ampere",
     "Python11",
     "Saipan",
@@ -120,7 +125,9 @@ TECH_CLASSES = [
     "Gemstone",
     "SPDOfficejetProAsize",
 	"CLE",
-    "SPDOfficejetProBsize"
+    "SPDOfficejetProBsize",
+        "CLE17",
+    "Mimas17"
 ]
 
 TECH_CLASSES.sort()
@@ -128,6 +135,7 @@ TECH_CLASSES.sort()
 TECH_CLASS_PDLS = {
     #"Undefined"    : '?',
     "Postscript"   : 'ps',
+	"PDF"          : 'pdf',
     "DJGenericVIP" : 'pcl3',
     #"PSB9100"      : 'pcl3',
     "LJMono"       : 'pcl3',
@@ -181,7 +189,9 @@ TECH_CLASS_PDLS = {
     "Copperhead12"   : 'pcl3',
     "CopperheadIPH"   : 'pcl3',
     "CopperheadIPH15"   : 'pcl3',
+    "CopperheadIPH17"   : 'pcl3',
     "PyramidRefresh15": 'pcl3',
+    "PyramidRefresh17": 'pcl3',
     "Ampere"        : 'pcl3',
     "Hbpl1"         : 'hbpl1',
     "Kapan"         : 'pcl3',
@@ -190,12 +200,16 @@ TECH_CLASS_PDLS = {
     "Gemstone"      : 'pcl3',
     "SPDOfficejetProAsize" : 'pcl3',
 	"CLE"                  :'pcl3',
-    "SPDOfficejetProAsize" : 'pcl3'
+    "SPDOfficejetProBsize" : 'pcl3',
+    "CLE17"                : 'pcl3',
+    "Mimas17"              : 'pcl3'
 }
 
 PDL_TYPE_PCL = 0  # less preferred
 PDL_TYPE_PS = 1   #      /\
+PDL_TYPE_PDF = 1
 PDL_TYPE_HOST = 2 # more preferred (however, may req. plugin)
+
 
 PDL_TYPES = { # Used to prioritize PPD file selection in prnt.cups.getPPDFile2()
     'pcl3' : PDL_TYPE_PCL,
@@ -205,6 +219,7 @@ PDL_TYPES = { # Used to prioritize PPD file selection in prnt.cups.getPPDFile2()
     'pcl' : PDL_TYPE_PCL,
     'pclxl' : PDL_TYPE_PCL,
     'ps' : PDL_TYPE_PS,
+	'pdf' : PDL_TYPE_PDF,
     'lidil' : PDL_TYPE_HOST,
     'zjs' : PDL_TYPE_HOST,
     'zjstream' : PDL_TYPE_HOST,
@@ -358,12 +373,14 @@ class ModelData:
             'support-type' : TYPE_INT,
             'support-ver' : TYPE_STR,
             'tech-class' : TYPE_LIST,
+            'family-class' : TYPE_LIST,
             'tech-subclass' : TYPE_LIST,
             'tech-type' : TYPE_INT,
             'usb-pid' : TYPE_HEX,
             'usb-vid' : TYPE_HEX,
             'wifi-config': TYPE_INT,
             'ppd-name' : TYPE_STR,
+            'family-ppd' : TYPE_STR,
             }
 
         self.FIELD_TYPES_DYN = {
