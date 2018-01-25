@@ -83,7 +83,7 @@ EOF
 
      *)
       AC_MSG_RESULT("using Default platform.h")
-      cat platform.h <<EOF
+      cat >platform.h <<EOF
 #include <stdlib.h>
 #include <memory.h>
 #include <string.h>
