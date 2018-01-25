@@ -1,6 +1,6 @@
 GCCVERSION := $(shell expr `gcc -dumpversion | cut -f1 ` \>= 4.7)
 ifeq "$(GCCVERSION)" "1"
-        CFLAGS = $(CFLAGS) -std=c++11
+        CFLAGS += -std=c++11
 endif
 
 dat2drv: datdrv.o Normalize.o
