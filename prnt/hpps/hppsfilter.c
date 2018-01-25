@@ -45,7 +45,7 @@ static void get_LogLevel ()
     FILE    *fp;
     char    str[258];
     char    *p;
-    fp = fopen ("/etc/cups/cupsd.conf", "r");
+    fp = fopen ("/@unixroot/etc/cups/cupsd.conf", "r");
     if (fp == NULL)
         return;
     while (!feof (fp))
@@ -73,7 +73,11 @@ static void open_dbg_outfile(char* szjob_id)
     {
         char    sfile_name[FILE_NAME_SIZE] = {0};
         sprintf(sfile_name, "%s/%s_%s.out", DBG_TMP_FOLDER,DBG_PSFILE, szjob_id);
+#ifdef __OS2__
+        g_fp_outdbgps= fopen(sfile_name, "wb");
+#else
         g_fp_outdbgps= fopen(sfile_name, "w");
+#endif
         chmod(sfile_name, S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH);
     }
 }
@@ -111,7 +115,11 @@ static char * GetPPDValues()
     if(pppd_file != NULL)
     {
       /* Opening PPD File                      */
+#ifdef __OS2__
+      FILE * file_pointer = fopen(pppd_file, "rb");
+#else
       FILE * file_pointer = fopen(pppd_file, "r");
+#endif
       if(!file_pointer)
       {
          fprintf(stderr, "HP PS filter func = GetPPDValues : GET PPD VALUES FAILED - 1\n");
@@ -359,7 +367,11 @@ static unsigned char WriteJobAccounting(char **argument, int num_options, cups_o
          memset(buffer, 0, sizeof(buffer));
        }
        memset(name, 0, sizeof(name));
+#ifdef __OS2__ // as we don't have a getdomainname, just use the hostname here as well
+       gethostname(name, sizeof(name));
+#else
        getdomainname(name,sizeof(name));
+#endif
        if(strstr(name, "none") != NULL)
        { 
            sprintf(buffer, "@PJL SET JOBATTR=\"JobAcct3=%s\"\x0a", "unknown_domain_name");

@@ -31,7 +31,11 @@ MODEL_DICT_MAP  CreateModelDict(DRV_DATA drv_value)
 
     
     fstream file_pointer;
+#ifdef __OS2__
+    file_pointer.open(drv_value.dat_path.c_str(), fstream::in | ios::binary);
+#else
     file_pointer.open(drv_value.dat_path.c_str(), fstream::in);
+#endif
 
     if(!file_pointer)
     {
@@ -454,14 +458,22 @@ char CreateFamilyClassDrv(DRV_DATA drv_data, MODEL_DICT_MAP model_dict, string m
     STRING_VECTOR matches;
     fstream file_in_pointer, file_out_pointer;
 
+#ifdef __OS2__
+    file_in_pointer.open(drv_data.drv_in_template.c_str(), fstream::in | ios::binary);
+#else
     file_in_pointer.open(drv_data.drv_in_template.c_str(), fstream::in);
+#endif
     if(!file_in_pointer)  
     {
        fprintf(stderr, "DAT2DRV : FAILED IN main (int argc, char **argv) ->  UNABLE TO OPEN A FILE FOR READ\n");    
        return -1;
     }
   
+#ifdef __OS2__
+    file_out_pointer.open(drv_data.drv_in.c_str(), fstream::out | ios::binary);
+#else
     file_out_pointer.open(drv_data.drv_in.c_str(), fstream::out);
+#endif
     if(!file_out_pointer)
     {
        fprintf(stderr, "DAT2DRV : FAILED IN main (int argc, char **argv) ->  UNABLE TO OPEN A FILE FOR READ\n");    
@@ -661,13 +673,21 @@ char CreateTechClassDrv(DRV_DATA drv_data, MODEL_DICT_MAP model_dict, STRING_PAI
     STRING_VECTOR sub_class, matches;
     fstream file_in_pointer, file_out_pointer;
 
+#ifdef __OS2__
+    file_in_pointer.open(drv_data.drv_in_template.c_str(), fstream::in | ios::binary);
+#else
     file_in_pointer.open(drv_data.drv_in_template.c_str(), fstream::in);
+#endif
     if(!file_in_pointer)  
     {
        cout<< "DAT2DRV : FAILED IN main (int argc, char **argv) ->  UNABLE TO OPEN A FILE FOR READ"<<endl;    
        return -1;
     }  
+#ifdef __OS2__
+    file_out_pointer.open(drv_data.drv_in.c_str(), fstream::out | ios::binary);
+#else
     file_out_pointer.open(drv_data.drv_in.c_str(), fstream::out);
+#endif
     if(!file_out_pointer)
     {
             cout<< "DAT2DRV : FAILED IN main (int argc, char **argv) ->  UNABLE TO OPEN A FILE FOR READ"<<endl;        

@@ -191,7 +191,7 @@ def isfamilydrv(ppds):
      #   for m in models.FAMILY_CLASSES:
       #       if m in f:
        #          family_check=1
-    filename_config = "/etc/hp/hplip.conf"
+    filename_config = "/@unixroot/etc/hp/hplip.conf"
     file_conf = open(filename_config,'r')
     for line in file_conf:
         if 'class-driver' in line:

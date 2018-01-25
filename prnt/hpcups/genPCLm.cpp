@@ -356,7 +356,11 @@ boolean writeOutputFile(int numBytes, ubyte *ptr, char *user_name)
 	fileCntr++;
 
 	// Open output PDF file
+#ifdef __OS2__
+	if (!(outputFile = fopen (outFileName, "wb")))
+#else
 	if (!(outputFile = fopen (outFileName, "w")))
+#endif
 	{
 		dbglog ("Could not open the output file out.\n");
 		exit (-1);

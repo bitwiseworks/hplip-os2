@@ -15,7 +15,11 @@ unsigned char  CreateModelDict(MODEL_DICT_MAP &model_dict)
 
     unsigned char family_ppd = 0;
     fstream file_pointer;
+#ifdef __OS2__
+    file_pointer.open("/@unixroot/usr/share/hplip/data/models/models.dat", fstream::in | ios::binary);
+#else
     file_pointer.open("/usr/share/hplip/data/models/models.dat", fstream::in);
+#endif
 
     if(!file_pointer)
     {
