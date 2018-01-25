@@ -51,7 +51,7 @@ AC_CHECK_HEADERS(jpeglib.h,, [AC_MSG_ERROR([cannot find libjpeg-devel support], 
 AC_C_BIGENDIAN(,[APDK_ENDIAN_FLAG="-DAPDK_LITTLE_ENDIAN"])
 
 # Autoconf-style header tests for APDK
-cat >prnt/hpijs/auto-include.h <<EOFH
+cat >auto-include.h <<EOFH
 #ifdef HAVE_INTTYPES_H
 #include <inttypes.h>
 #endif
@@ -62,7 +62,7 @@ cat >prnt/hpijs/auto-include.h <<EOFH
 #include <machine/types.h>
 #endif
 EOFH
-AC_CHECK_TYPES([uint32_t], [APDK_AUTO_INCLUDE_FLAG="-DAPDK_AUTO_INCLUDE"],, [#include "prnt/hpijs/auto-include.h"])
+AC_CHECK_TYPES([uint32_t], [APDK_AUTO_INCLUDE_FLAG="-DAPDK_AUTO_INCLUDE"],, [#include "auto-include.h"])
 
 AC_MSG_CHECKING("for platform-dependencies")
 darwin_build="no"
@@ -83,7 +83,7 @@ EOF
 
      *)
       AC_MSG_RESULT("using Default platform.h")
-      cat >prnt/hpijs/platform.h <<EOF
+      cat platform.h <<EOF
 #include <stdlib.h>
 #include <memory.h>
 #include <string.h>

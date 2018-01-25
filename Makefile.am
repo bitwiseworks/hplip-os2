@@ -3,7 +3,7 @@
 #
 #  (c) 2004-2015 Copyright HP Development Company, LP
 #  Author: David Suffield, Naga Samrat Chowdary Narla, Sarbeswar Meher
-INCLUDES = -Iip -Iio/hpmud -Iscan/sane -Iprnt/hpijs -Icommon/
+INCLUDES = -I$(srcdir)/ip -I$(srcdir)/io/hpmud -I$(srcdir)/scan/sane -I$(srcdir)/prnt/hpijs -I$(srcdir)/common/
 CFLAGS+= -DCONFDIR=\"$(hplip_confdir)\"
 CXXFLAGS+= -DCONFDIR=\"$(hplip_confdir)\"
 
@@ -73,11 +73,11 @@ endif
 # The following is a interlibrary dependency that must be compiled first.
 libsane_hpaio_la_LIBADD = libhpip.la libhpmud.la libhpipp.la $(DBUS_LIBS) -lcups -ldl
 #libsane_hpaio_la_CFLAGS = -DWITH_NONAMESPACES -DSOAP_DEBUG
-libsane_hpaio_la_CFLAGS = $(DBUS_CFLAGS) -Iprotocol
+libsane_hpaio_la_CFLAGS = $(DBUS_CFLAGS) -I$(srcdir)/protocol
 
 if NETWORK_BUILD
 libsane_hpaio_la_LIBADD += libhpdiscovery.la
-libsane_hpaio_la_CFLAGS += -Iprotocol/discovery
+libsane_hpaio_la_CFLAGS += -I$(srcdir)/protocol/discovery
 endif
 endif #!HPLIP_CLASS_DRIVER
 endif # SCAN_BUILD
@@ -97,7 +97,7 @@ endif #NETWORK_BUILD
 if !HPLIP_CLASS_DRIVER
 MUDNAME=hpmud
 lib_LTLIBRARIES += libhpmud.la
-libhpmud_la_CFLAGS  = -DMUDNAME=\"$(MUDNAME)\" -DCONFDIR=\"$(hplip_confdir)\" -Iprotocol
+libhpmud_la_CFLAGS  = -DMUDNAME=\"$(MUDNAME)\" -DCONFDIR=\"$(hplip_confdir)\" -I$(srcdir)/protocol
 libhpmud_la_LDFLAGS = -version-info 0:6:0 -lpthread -ldl -buildlevel '$(BUILDLEVEL_INFO)'
 libhpmud_la_SOURCES = io/hpmud/hpmud.c io/hpmud/mlc.c io/hpmud/model.c io/hpmud/pml.c \
 	  io/hpmud/hpmud.h io/hpmud/hpmudi.h io/hpmud/list.h io/hpmud/mlc.h io/hpmud/pml.h io/hpmud/dot4.c \
@@ -115,7 +115,7 @@ endif
 
 
 if NETWORK_BUILD
-libhpmud_la_CFLAGS  += -Iprotocol/discovery
+libhpmud_la_CFLAGS  += -I$(srcdir)/protocol/discovery
 libhpmud_la_LDFLAGS += -l$(SNMPLIB) -lcrypto
 libhpmud_la_LIBADD  =  libhpdiscovery.la
 endif
@@ -330,7 +330,7 @@ cupsextdir = $(pyexecdir)
 cupsext_LTLIBRARIES = cupsext.la
 cupsext_la_LDFLAGS = -module -avoid-version -buildlevel '$(BUILDLEVEL_INFO)'
 cupsext_la_SOURCES =  prnt/cupsext/cupsext.c prnt/cupsext/cupsext.h
-cupsext_la_CFLAGS = -I$(PYTHONINCLUDEDIR) -Iprotocol
+cupsext_la_CFLAGS = -I$(PYTHONINCLUDEDIR) -I$(srcdir)/protocol
 cupsext_la_LIBADD = -lpython2.7 -lcups libhpipp.la
 endif #HPLIP_CLASS_DRIVER
 
@@ -360,7 +360,7 @@ hpmudext_la_LIBADD = -lpython2.7 libhpmud.la
 
 if NETWORK_BUILD
 hpmudext_la_LIBADD += libhpdiscovery.la
-hpmudext_la_CFLAGS += -Iprotocol/discovery
+hpmudext_la_CFLAGS += -I$(srcdir)/protocol/discovery
 endif
 
 if !LIBUSB01_BUILD
@@ -530,7 +530,7 @@ libapdk_la_CXXFLAGS = -DAPDK_DJ660 -DAPDK_DJ6xx -DAPDK_DJ6xxPhoto -DAPDK_DJ8xx -
 	-DAPDK_LJJETREADY  -DAPDK_LJFASTRASTER -DAPDK_BUFFER_SEND -DAPDK_LDL_COMPRESS -DAPDK_EXTENDED_MEDIASIZE \
 	-DAPDK_MLC_PRINTER -DAPDK_DJ3600 -DAPDK_LJZJS_MONO -DAPDK_LJZJS_COLOR -DAPDK_LJM1005 -DAPDK_QUICKCONNECT \
                 $(APDK_ENDIAN_FLAG) $(APDK_AUTO_INCLUDE_FLAG) -DAPDK_LINUX -DNDEBUG $(DBUS_CFLAGS)
-libapdk_la_CFLAGS = $(libapdk_la_CXXFLAGS) -Iprnt/hpijs
+libapdk_la_CFLAGS = $(libapdk_la_CXXFLAGS) -I$(srcdir)/prnt/hpijs
 
 if HPIJS_INSTALL
 # hpijs
