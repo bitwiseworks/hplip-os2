@@ -659,7 +659,8 @@ endif
 if !HPLIP_CLASS_DRIVER
 dist_ppd_DATA = $(foomatic_ps_printers)
 dist_ppd_DATA += $(foomatic_pdf_printers)
-dist_ppd_DATA += $(cups_ppd_printers)
+cupsppddir = $(ppddir)
+dist_cupsppd_DATA = $(cups_ppd_printers)
 endif
 
 if HPLIP_CLASS_DRIVER
