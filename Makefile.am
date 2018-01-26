@@ -659,8 +659,7 @@ endif
 if !HPLIP_CLASS_DRIVER
 dist_ppd_DATA = $(foomatic_ps_printers)
 dist_ppd_DATA += $(foomatic_pdf_printers)
-cupsppddir = $(ppddir)
-dist_cupsppd_DATA = $(cups_ppd_printers)
+dist_ppd_DATA += $(cups_ppd_printers)
 endif
 
 if HPLIP_CLASS_DRIVER
@@ -917,3 +916,16 @@ if HPLIP_CLASS_DRIVER
 	epm -f deb hplipclassdriver hplip.list --output-dir ./
 endif
 
+# we need to write this part by ourself, as we need to use a rsp file here
+install-dist_ppdDATA: $(dist_ppd_DATA)
+	@$(NORMAL_INSTALL)
+	$(foreach file, $(dist_ppd_DATA), $(shell echo $(srcdir)/$(file) >>rspfile))
+	if test -s "rspfile"; then \
+	  if test -n "$(ppddir)"; then \
+	    echo " $(MKDIR_P) '$(DESTDIR)$(ppddir)'"; \
+	    $(MKDIR_P) "$(DESTDIR)$(ppddir)" || exit 1; \
+	  fi; \
+	  echo " $(INSTALL_DATA) @rspfile '$(DESTDIR)$(ppddir)'"; \
+	  $(INSTALL_DATA) @rspfile "$(DESTDIR)$(ppddir)" || exit $$?; \
+	fi; \
+	rm -f rspfile;
