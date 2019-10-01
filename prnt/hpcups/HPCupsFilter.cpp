@@ -31,7 +31,6 @@
 \*****************************************************************************/
 
 #include "HPCupsFilter.h"
-#include "ImageProcessor.h"
 
 #include <signal.h>
 #include <sys/wait.h>
@@ -212,6 +211,7 @@ HPCupsFilter::HPCupsFilter() : m_pPrinterBuffer(NULL)
     adj_k_width = 0;
     black_raster = NULL;
     color_raster = NULL;
+    memset (&m_JA, 0, sizeof (m_JA));
 }
 
 HPCupsFilter::~HPCupsFilter()
@@ -419,9 +419,9 @@ DRIVER_ERROR HPCupsFilter::startPage (cups_page_header2_t *cups_header)
         m_JA.media_attributes.physical_height = cups_header->PageSize[1];
         m_JA.media_attributes.printable_width = ((cups_header->ImagingBoundingBox[2]-cups_header->ImagingBoundingBox[0]) * horz_res) / 72;
         m_JA.media_attributes.printable_height = ((cups_header->ImagingBoundingBox[3]-cups_header->ImagingBoundingBox[1]) * vert_res) / 72;
-        strncpy(m_JA.media_attributes.PageSizeName, &cups_header->cupsString[0][0], sizeof(m_JA.media_attributes.PageSizeName));
-        strncpy(m_JA.media_attributes.MediaTypeName, cups_header->MediaType, sizeof(m_JA.media_attributes.MediaTypeName));
-        strncpy(m_JA.quality_attributes.hbpl1_print_quality, cups_header->OutputType, sizeof(m_JA.quality_attributes.hbpl1_print_quality));
+        strncpy(m_JA.media_attributes.PageSizeName, &cups_header->cupsString[0][0], sizeof(m_JA.media_attributes.PageSizeName)-1);
+        strncpy(m_JA.media_attributes.MediaTypeName, cups_header->MediaType, sizeof(m_JA.media_attributes.MediaTypeName)-1);
+        strncpy(m_JA.quality_attributes.hbpl1_print_quality, cups_header->OutputType, sizeof(m_JA.quality_attributes.hbpl1_print_quality)-1);
         m_JA.color_mode = cups_header->cupsRowStep;
     }
     else {
@@ -573,6 +573,13 @@ int HPCupsFilter::StartPrintJob(int  argc, char *argv[])
 
     signal(SIGTERM, HPCancelJob);
 
+/*
+ *  Prior to the re-write of hpcups, this filter managed the
+ *  marker-supply-low-warning printer state reason.  Make sure to
+ *  clear that state reason so that upgrades work correctly.
+ */
+    fputs ("STATE: -marker-supply-low-warning\n", stderr);
+
     cups_raster = cupsRasterOpen(fd, CUPS_RASTER_READ);
 
     if (cups_raster == NULL) {
@@ -646,16 +653,10 @@ int HPCupsFilter::processRasterData(cups_raster_t *cups_raster)
     char hpPreProcessedRasterFile[MAX_FILE_PATH_LEN]; //temp file needed to store raster data with swaped pages.
 
 
-    sprintf(hpPreProcessedRasterFile, "%s/hp_%s_cups_SwapedPagesXXXXXX",CUPS_TMP_DIR, m_JA.user_name);
-    image_processor_t* imageProcessor = imageProcessorCreate();
+    snprintf(hpPreProcessedRasterFile, sizeof(hpPreProcessedRasterFile), "%s/hp_%s_cups_SwapedPagesXXXXXX",CUPS_TMP_DIR, m_JA.user_name);
 
     while (cupsRasterReadHeader2(cups_raster, &cups_header))
     {
-
-        IMAGE_PROCESSOR_ERROR result = imageProcessorStartPage(imageProcessor, &cups_header);
-        if (result != IPE_SUCCESS){
-            dbglog("DEBUG: imageProcessorStartPage failed result = %d\n", result);
-        }
 
         current_page_number++;
 
@@ -755,12 +756,6 @@ int HPCupsFilter::processRasterData(cups_raster_t *cups_raster)
             color_raster = rgbRaster;
             black_raster = kRaster;
 
-            result = imageProcessorProcessLine(imageProcessor, m_pPrinterBuffer, cups_header.cupsBytesPerLine);
-            if (result != IPE_SUCCESS){
-                dbglog("DEBUG: imageProcessorProcessLine failed result = %d\n", result);
-            }
-
-
             if ((y == 0) && !is_ljmono) {
                 //For ljmono, make sure that first line is not a blankRaster line.Otherwise printer
                 //may not skip blank lines before actual data
@@ -790,12 +785,6 @@ int HPCupsFilter::processRasterData(cups_raster_t *cups_raster)
             }
         }  // for() loop end
 
-        result = imageProcessorEndPage(imageProcessor);
-        if (result != IPE_SUCCESS){
-                dbglog("DEBUG: imageProcessorEndPage failed result = %d\n", result);
-        }
-
-
         m_Job.NewPage();
         if (err != NO_ERROR) {
             break;
@@ -809,8 +798,6 @@ int HPCupsFilter::processRasterData(cups_raster_t *cups_raster)
         kRaster = NULL;
         rgbRaster = NULL;
     }
-
-    imageProcessorDestroy(imageProcessor);
 
     unlink(hpPreProcessedRasterFile);
     return ret_status;
