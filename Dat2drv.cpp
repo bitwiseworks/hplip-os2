@@ -268,10 +268,8 @@ int TechClassExsist(string tech_class)
   {
      if (tech_class == TECH_CLASSES[count])
          return 1;
-     if(count < 4 && tech_class == FAMILY_CLASSES[count])
-         return 0 ;
   }  
-  fprintf(stderr, "DAT2DRV : FAILED IN TechClassExsist(string tech_class) -> = NO TECH CLASS MATCH FOUND\n");   
+  //fprintf(stderr, "DAT2DRV : FAILED IN TechClassExsist(string tech_class) -> = NO TECH CLASS MATCH FOUND\n");   
   return -1;
 }
 
@@ -456,6 +454,8 @@ char CreateFamilyClassDrv(DRV_DATA drv_data, MODEL_DICT_MAP model_dict, string m
     string family_class = "",
            line         = "";
     STRING_VECTOR matches;
+    STRING_VECTOR sub_class;
+
     fstream file_in_pointer, file_out_pointer;
 
 #ifdef __OS2__
@@ -482,18 +482,33 @@ char CreateFamilyClassDrv(DRV_DATA drv_data, MODEL_DICT_MAP model_dict, string m
 
     while((getline(file_in_pointer, line)))
     {
-            size_t found = line.find("%");
+            string search_family_class;
             stringstream f(line);
+            size_t found = line.find("%");
             file_out_pointer << line + "\n"; 
             if(found != std::string::npos)
             {
                found = line.find("//"); 
                if(found != std::string::npos)
                {
-                  while(getline(f, family_class, '%'))
+                  while(getline(f, search_family_class, '%'))
                   {   
-                     if(family_class[0] == ' ' || family_class[0] == '>' || family_class[3] == '/')  
+                     if(search_family_class[0] == ' ' || search_family_class[0] == '>' || search_family_class[3] == '/')  
                          continue;
+
+                     stringstream f1(search_family_class);
+                     unsigned char len = 0;
+                     sub_class.clear();
+                     while(getline(f1, search_family_class, ':'))
+		     {
+                        if(len == 0)
+                        {
+                           family_class = search_family_class;
+                           len ++;
+                        }
+			else 
+                           sub_class.push_back(search_family_class);
+	             }
 
                      for(unsigned char count = 0 ; count < MAX_FAMILY_CLASS; count ++)
                      {
@@ -723,16 +738,7 @@ char CreateTechClassDrv(DRV_DATA drv_data, MODEL_DICT_MAP model_dict, STRING_PAI
 			else 
                            sub_class.push_back(search_tech_class);
 	             }
-                     for(unsigned char count = 0 ; count < MAX_FAMILY_CLASS; count ++)
-                     {
-                         found = 0;
-                         if(tech_class == FAMILY_CLASSES[count])
-                         { 
-                            found = 1;  
-                            break;  
-                         } 
-                     }
-                     if((found == 1) || (TechClassExsist(tech_class)) != 1)
+                     if((TechClassExsist(tech_class)) != 1)
                          continue;
                      if((SubClassExsist(sub_class)) != 1)
                          continue;
@@ -873,8 +879,15 @@ char CreateTechClassDrv(DRV_DATA drv_data, MODEL_DICT_MAP model_dict, STRING_PAI
                             if(bHpijs)
                               write_data += indent2 + "Attribute \"ShortNickName\" \"\" " + "\"" + model_name + "\"" + "\n";
                             else
-                              write_data += indent2 + "Attribute \"ShortNickName\" \"\" " + "\"" + model_name + " hpijs\"" + "\n";
-
+                            {
+                             string write_data1= "";
+                              write_data1 = model_name + " hpijs";
+                              if(write_data1.length() > 31)
+                              {                              
+                              ShortModelLength(write_data1);                              
+                              }
+                              write_data += indent2 + "Attribute \"ShortNickName\" \"\" " + "\"" + write_data1 + "\"" + "\n";                              
+			     }
                             file_out_pointer << write_data;
                              
                             string pp = matches[len];

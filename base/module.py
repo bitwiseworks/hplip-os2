@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# (c) Copyright 2003-2015 HP Development Company, L.P.
+# (c) Copyright 2003-2018 HP Development Company, L.P.
 #
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -35,7 +35,7 @@ USAGE_FLAG_SUPRESS_G_DEBUG_FLAG = 0x02
 USAGE_FLAG_FILE_ARGS = 0x04
 
 
-
+uiscan=False
 class Module(object):
     def __init__(self, mod, title, version, doc,
                  usage_data=None, avail_modes=None,
@@ -311,6 +311,7 @@ class Module(object):
         show_usage = None
         device_uri = None
         printer_name = None
+        uiscan=False
         error_msg = []
         mode = self.default_mode
         if prop.gui_build:
@@ -368,6 +369,9 @@ class Module(object):
 
                 elif o == '--help-desc':
                     show_usage = 'desc'
+                
+                elif o == '--uiscan':
+                    uiscan = True
 
                 elif o in ('--qt3', '--use-qt3'):
                     if self.avail_modes is not None and GUI_MODE in self.avail_modes:
@@ -416,12 +420,14 @@ class Module(object):
 
         if self.help_only_support:
             if show_usage or error_msg:
-                self.usage(show_usage, error_msg)
+                if uiscan == False:
+                    self.usage(show_usage, error_msg)
             else:
                 log.info(log.bold("\nPlease check usage '%s --help'"%self.mod))
                 show_usage = 'text'
         else:
-            self.usage(show_usage, error_msg)
+            if uiscan == False:
+                self.usage(show_usage, error_msg)
 
         if show_usage is not None:
             sys.exit(0)
@@ -472,13 +478,16 @@ class Module(object):
             log.info("")
 
             if show_ver:
-                log.info(log.bold("HP Linux Imaging and Printing System (ver. %s)" % prop.version))
+                #if uiscan == False:
+                 log.info(log.bold("HP Linux Imaging and Printing System (ver. %s)" % prop.version))
             else:
-                log.info(log.bold("HP Linux Imaging and Printing System"))
+                #if uiscan == False:
+                 log.info(log.bold("HP Linux Imaging and Printing System"))
 
+            #if uiscan == False:
             log.info(log.bold("%s ver. %s" % (self.title, self.version)))
             log.info("")
-            log.info("Copyright (c) 2001-15 HP Development Company, LP")
+            log.info("Copyright (c) 2001-18 HP Development Company, LP")
             log.info("This software comes with ABSOLUTELY NO WARRANTY.")
             log.info("This is free software, and you are welcome to distribute it")
             log.info("under certain conditions. See COPYING file for more details.")

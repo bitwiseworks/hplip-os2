@@ -48,7 +48,7 @@ import collections
 # dbus
 try:
     import dbus
-    from dbus.mainloop.pyqt5 import DBusQtMainLoop
+    from dbus.mainloop.glib import DBusGMainLoop
     from dbus import lowlevel
 except ImportError:
     log.error("Unable to load DBus libraries. Please check your installation and try again.")
@@ -269,7 +269,7 @@ class DevMgr5(Ui_MainWindow_Derived, Ui_MainWindow, QMainWindow):
 
     # TODO: Make sbus init mandatory success, else exit
     def initDBus(self):
-        self.dbus_loop = DBusQtMainLoop(set_as_default=True)
+        self.dbus_loop = DBusGMainLoop(set_as_default=True)
         self.dbus_avail, self.service, self.session_bus = device.init_dbus(self.dbus_loop)
 
         if not self.dbus_avail:
@@ -322,7 +322,7 @@ class DevMgr5(Ui_MainWindow_Derived, Ui_MainWindow, QMainWindow):
         self.PreferencesAction.triggered.connect(self.PreferencesAction_activated)
 
         self.DiagnoseQueueAction.setIcon(QIcon(load_pixmap('warning', '16x16')))
-        self.DiagnoseQueueAction.triggered.connect(self.DiagnoseQueue_activated)
+        self.DiagnoseQueueAction.triggered.connect(self.DiagnoseQueueAction_activated)
 
         self.DiagnoseHPLIPAction.setIcon(QIcon(load_pixmap('troubleshoot', '16x16')))
         self.DiagnoseHPLIPAction.triggered.connect(self.DiagnoseHPLIP_activated)
@@ -783,7 +783,7 @@ class DevMgr5(Ui_MainWindow_Derived, Ui_MainWindow, QMainWindow):
                     self.cur_device = None
                     self.DeviceRefreshAction.setEnabled(False)
                     self.RemoveDeviceAction.setEnabled(False)
-                    self.DiagnoseQueueAction.setEnabled(False)
+                    #self.DiagnoseQueueAction.setEnabled(False)
                     self.updating = False
                     self.statusBar().showMessage(self.__tr("Press F6 to refresh."))
 
@@ -806,7 +806,7 @@ class DevMgr5(Ui_MainWindow_Derived, Ui_MainWindow, QMainWindow):
 
             if self.cur_device is not None:
                 self.RemoveDeviceAction.setEnabled(True)
-                self.DiagnoseQueueAction.setEnabled(True)
+                #self.DiagnoseQueueAction.setEnabled(True)
 
                 self.statusBar().showMessage(self.cur_device_uri)
                 self.updateWindowTitle()
@@ -2166,7 +2166,7 @@ class DevMgr5(Ui_MainWindow_Derived, Ui_MainWindow, QMainWindow):
         self.updatePrinterCombos()
 
 
-    def DiagnoseQueue_activated(self):
+    def DiagnoseQueueAction_activated(self):
         if utils.which('hp-diagnose_queues'):
             cmd= 'hp-diagnose_queues --gui'
         else:

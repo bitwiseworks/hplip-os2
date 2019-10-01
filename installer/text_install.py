@@ -192,6 +192,30 @@ def start(language, auto=True, test_depends=False,
             global Fedora_Py3
             Fedora_Py3 = True
 
+        if core.distro_name.lower() == 'manjarolinux':
+            # Workaround to install Manjaro dependency package.
+            log.debug("Installing libidn")
+            if core.distro_version < '18.0':
+                cmd2 = 'sudo pacman -Sy --force --noconfirm libidn'
+            else:
+                cmd2 = 'sudo pacman -Sy --noconfirm libidn'
+            if os_utils.execute(cmd2) != 0:
+                log.warning("Missing ghost script dependency,installation may fail")
+            log.debug("Installing libjpeg-turbo")
+            if core.distro_version < '18.0':
+                cmd = 'sudo pacman -Sy --force --noconfirm libjpeg-turbo'
+            else:
+                cmd = 'sudo pacman -Sy --noconfirm libjpeg-turbo'
+            if os_utils.execute(cmd) != 0:
+                log.warning("Missing libjpeg-turbo dependency,installation may fail")
+            log.debug("Installing ghostscript")
+            if core.distro_version < '18.0':
+                cmd1 = 'sudo pacman -Sy --force --noconfirm ghostscript'
+            else:
+                cmd1 = 'sudo pacman -Sy --noconfirm ghostscript'
+            if os_utils.execute(cmd1) != 0:
+                log.warning("Missing ghost script dependency,installation may fail")
+
         if distro_alternate_version:
             core.distro_version = distro_alternate_version
 
@@ -723,6 +747,20 @@ def start(language, auto=True, test_depends=False,
                 log.info("%s is installed. " % sec_package_name)
                 log.info(
                     "%s protects the application from external intrusion attempts making the application secure" % sec_package_name)
+                
+                if core.distro_name.lower() == 'fedora' and core.distro_version < '28':
+                    #print("SELinux enabling the 'cups_execmem' boolean ")
+                    cds_cmd  = 'su -c "setsebool -P cups_execmem 1" '                    
+                    status, output = utils.run(cds_cmd, core.passwordObj)
+                    if status != 0:
+                        log.error("SELinux 'cups_execmem ' Boolean set it '1' failed with status %d" % status) 
+                elif core.distro_name.lower() == 'fedora':
+                    #print("SELinux enabling the 'cups_execmem' boolean ")
+                    cds_cmd  = 'sudo setsebool -P cups_execmem 1'                    
+                    status, output = utils.run(cds_cmd, core.passwordObj)
+                    if status != 0:
+                        log.error("SELinux 'cups_execmem ' Boolean set it '1' failed with status %d" % status) 
+						
                 ok, answer = tui.enter_yes_no(
                     "\nWould you like to have this installer install the hplip specific policy/profile")
                 if not ok:
@@ -1204,6 +1242,38 @@ def start(language, auto=True, test_depends=False,
             core.run_post_depend(progress_callback)
             log.info("OK")
 
+
+            if core.distro_name.lower() == 'manjarolinux':
+                # Workaround to install Manjaro dependency package.
+                log.debug("Installing libidn")
+                if core.distro_version < '18.0':
+                    cmd2 = 'sudo pacman -Sy --force --noconfirm libidn'
+                else:
+                    cmd2 = 'sudo pacman -Sy --noconfirm libidn'
+                if os_utils.execute(cmd2) != 0:
+                    log.warning("Missing ghost script dependency,installation may fail")
+                log.debug("Installing libjpeg-turbo")
+                if core.distro_version < '18.0':
+                    cmd = 'sudo pacman -Sy --force --noconfirm libjpeg-turbo'
+                else:
+                    cmd = 'sudo pacman -Sy --noconfirm libjpeg-turbo'
+                if os_utils.execute(cmd) != 0:
+                    log.warning("Missing libjpeg-turbo dependency,installation may fail")
+                log.debug("Installing ghostscript")
+                if core.distro_version < '18.0':
+                    cmd1 = 'sudo pacman -Sy --force --noconfirm ghostscript'
+                else:
+                    cmd1 = 'sudo pacman -Sy --noconfirm ghostscript'
+                if os_utils.execute(cmd1) != 0:
+                    log.warning("Missing ghost script dependency,installation may fail")
+
+            if core.distro_name.lower() == 'fedora' and core.distro_version >= '30':
+                cmd_fedora = 'sudo dnf -y -d 10 -e 1 install dbus-devel'
+                status, output = utils.run(cmd_fedora, core.passwordObj)
+                if status != 0:
+                    log.error("Install command failed with error code %d" % status)
+                    sys.exit(1)
+                   
             #
             # DEPENDENCIES RE-CHECK
             #
@@ -1241,6 +1311,14 @@ def start(language, auto=True, test_depends=False,
 
             if not num_opt_missing and not num_req_missing:
                 log.info("OK")
+
+        #
+        # SCANJET DEPENDENCIES
+        #
+        if bClassDriver == False:
+            tui.title("RUNNING SCANJET DEPENDENCY COMMANDS")
+            core.run_scanjet_depend(progress_callback)
+            log.info("OK")                   
 
         #
         # INSTALL LOCATION
@@ -1320,14 +1398,16 @@ def start(language, auto=True, test_depends=False,
 
         tui.title("POST-BUILD COMMANDS")
         core.run_post_build(progress_callback, distro_alternate_version)
-        try:
-            from prnt import cups
-            # This call is just to update the cups PPD cache file@
-            # /var/cache/cups/ppds.dat. If this is not called, hp-setup picks
-            # incorrect ppd 1st time for some printers.
-            cups.getSystemPPDs()
-        except ImportError:
-            log.error("Failed to Import Cups")
+
+        if not (core.distro_name.lower() == 'manjarolinux'):
+            try:
+                from prnt import cups
+                # This call is just to update the cups PPD cache file@
+                # /var/cache/cups/ppds.dat. If this is not called, hp-setup picks
+                # incorrect ppd 1st time for some printers.
+                cups.getSystemPPDs()
+            except ImportError:
+                log.error("Failed to Import Cups")
 
         #
         # OPEN MDNS MULTICAST PORT
