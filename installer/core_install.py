@@ -97,16 +97,16 @@ err_pats = {r'(?is)<TITLE>.*?(404|403).*?ERROR.*?</TITLE>': 0.95,
 BINS_LIST = ['hpijs', 'hp-align', 'hp-colorcal', 'hp-faxsetup', 'hp-linefeedcal', 'hp-pkservice', 'hp-printsettings', 'hp-sendfax', 'hp-timedate', 'hp-check', 'hp-devicesettings', 'hp-firmware', 'hp-makecopies', 'hp-plugin', 'hp-probe', 'hp-setup', 'hp-toolbox', 'hp-check-plugin', 'hp-diagnose_plugin',
              'hp-info', 'hp-makeuri', 'hp-pqdiag', 'hp-query', 'hp-systray', 'hp-unload', 'hp-clean', 'hp-fab', 'hp-levels', 'hp-print', 'hp-scan', 'hp-testpage', 'hp-wificonfig', 'hp-upgrade', 'hplip-info', 'hp-check-upgrade', 'hp-config_usb_printer', 'hp-diagnose_queues', 'hp-devicesetup', 'hp-doctor', 'hp-logcapture']
 
-LIBS_LIST = ['libhpmud.*', 'libhpip.*', 'sane/libsane-hpaio.*', 'cups/backend/hp', 'cups/backend/hpfax', 'cups/filter/hpcac',
+LIBS_LIST = ['libhpmud.*', 'libhpip.*', 'sane/libsane-hpaio.*', 'cups/backend/hp', 'cups/backend/hpfax', 'cups/filter/hpcac','sane/libsane-hp2000S1*', 'libjpeg*',
              'cups/filter/hpps', 'cups/filter/pstotiff', 'cups/filter/hpcups', 'cups/filter/hpcupsfax', 'cups/filter/hplipjs']
 
 HPLIP_EXT_LIST = ['cupsext.so', 'cupsext.la', 'scanext.so', 'scanext.la',
                   'hpmudext.so', 'hpmudext.la', 'pcardext.so', 'pcardext.la']
 
-FILES_LIST = ['/usr/share/cups/drv/hp/', '/usr/local/share/ppd/HP/', '/usr/local/share/cups/drv/hp/', '/usr/share/applications/hplip.desktop',
+FILES_LIST = ['/usr/share/cups/drv/hp/', '/usr/local/share/ppd/HP/', '/usr/local/share/cups/drv/hp/', '/usr/share/applications/hplip.desktop', '/usr/share/applications/hp-uiscan.desktop',
               '/etc/xdg/autostart/hplip-systray.desktop', '/etc/hp/hplip.conf', '/usr/share/doc/hplip-*', '/usr/lib/systemd/system/hplip-printer*.service']
 
-RULES_LIST = ['56-hpmud.rules', '56-hpmud_sysfs.rules', '40-hplip.rules', '56-hpmud_support.rules', '56-hpmud_support_sysfs.rules', '55-hpmud.rules',
+RULES_LIST = ['56-hpmud.rules', '56-hpmud_sysfs.rules', '40-hplip.rules', '56-hpmud_support.rules', '56-hpmud_support_sysfs.rules', '55-hpmud.rules','S99-2000S1.rules',
               '55-hpmud_sysfs.rules', '56-hpmud_add_printer.rules', '56-hpmud_add_printer_sysfs.rules', '86-hpmud-hp_*.rules', '86-hpmud_plugin.rules', '86-hpmud_plugin_sysfs.rules']
 
 HPLIP_LIST = ['*.py', '*.pyc', 'base', 'copier', 'data', 'installer', 'pcard', 'ui4', 'ui', 'fax/*.py', 'fax/*.pyc',
@@ -183,6 +183,15 @@ PYDBUS_STR = "Python DBus - Python bindings for DBus"
 PYXML_STR = "Python XML libraries"
 PY_DEV_STR = "Python devel - Python development files"
 PIL_STR = "PIL - Python Imaging Library (required for commandline scanning with hp-scan)"
+PIP_STR = "PIP - preferred installer program"
+TESS_STR = "Tesseract - Tesseract library for python"
+TESSEROCR_STR = "Tesserocr - Optical-character-recognition tesseract library for python"
+IMUTILS_STR = "Imutils - A series of basic image processing functions"
+OPENCV_STR = "Opencv - opencv library for python"
+ZBAR_STR = "ZBAR -zbar library for python"
+LEPTO_STR = "leptonica - leptonica library for python"
+#SETUPTOOLS_STR = "setuptools - library designed to facilitate packaging Python projects"
+PYPDF2_STR = "pypdf2 - pdf library for python"
 REPORTLAB_STR = "Reportlab - PDF library for Python"
 CUPSEXT_STR = 'CUPS-Extension'
 HPMUDEXT_STR = 'IO-Extension'
@@ -260,6 +269,8 @@ class CoreInstall(object):
             'pre_install_cmd': TYPE_LIST,
             'pre_depend_cmd': TYPE_LIST,
             'post_depend_cmd': TYPE_LIST,
+            'scanjet_depend_cmd': TYPE_LIST, 
+            'scanjet_py3_depend_cmd': TYPE_LIST, 
             'hpoj_remove_cmd': TYPE_STRING,
             'hplip_remove_cmd': TYPE_STRING,
             'su_sudo': TYPE_STRING,
@@ -364,9 +375,13 @@ class CoreInstall(object):
 
 
             # Required scan packages
-            'sane':             (True,  ['scan'], SANE_STR, self.check_sane, DEPENDENCY_RUN_TIME, '-', 'sane-config --version', GENERALDEP),
+            'sane':            (True,  ['scan'], SANE_STR, self.check_sane, DEPENDENCY_RUN_TIME, '-', 'sane-config --version', GENERALDEP),
             'sane-devel':      (True,  ['scan'], SANE_DEV_STR, self.check_sane_devel, DEPENDENCY_COMPILE_TIME, '-', 'sane-config --version', GENERALDEP),
-
+            #'tesseract':       (True, ['scan'], TESS_STR, self.check_tesseract, DEPENDENCY_RUN_TIME, '-', 'tesseract --version', GENERALDEP),
+           
+            #'zbar':            (True, ['scan'], ZBAR_STR, self.check_zbar, DEPENDENCY_RUN_TIME, '-', None, GENERALDEP),
+            #'libleptonica':    (True, ['scan'], LEPTO_STR, self.check_libleptonica, DEPENDENCY_RUN_TIME, '-', None, GENERALDEP),
+            
             # Optional scan packages
             'xsane':            (False, ['scan'], XSANE_STR, self.check_xsane, DEPENDENCY_RUN_TIME, '0.9', 'FUNC#get_xsane_version', EXTERNALDEP),
             'scanimage':        (False, ['scan'], SCANIMAGE_STR, self.check_scanimage, DEPENDENCY_RUN_TIME, '1.0', 'scanimage --version', EXTERNALDEP),
@@ -388,26 +403,37 @@ class CoreInstall(object):
 
         python2_dep = {
             'python2X':         (True,  ['base'], PYTHON_STR, self.check_python, DEPENDENCY_RUN_AND_COMPILE_TIME, '2.2', 'python --version', GENERALDEP),
+            #'setuptools':      (False, ['scan'], SETUPTOOLS_STR, self.check_setuptools, DEPENDENCY_RUN_TIME, '-', None, GENERALDEP),
+            #'pip':          (True, ['scan'], PIP_STR, self.check_pip, DEPENDENCY_RUN_TIME, '-', None, GENERALDEP),
+            #'pypdf2':          (True, ['scan'], PYPDF2_STR, self.check_pypdf2, DEPENDENCY_RUN_TIME, '-', None, GENERALDEP),
+            #'opencv':          (True, ['scan'], OPENCV_STR, self.check_opencv, DEPENDENCY_RUN_TIME, '-', None, GENERALDEP),
+            #'zbar':            (True, ['scan'], ZBAR_STR, self.check_zbar, DEPENDENCY_RUN_TIME, '-', None, GENERALDEP),
             # Optional for libnotify style popups from hp-systray
             'python-notify':   (False, ['gui_qt5', 'gui_qt4'], PYNTF_STR, self.check_pynotify, DEPENDENCY_RUN_TIME, '-', 'python-notify --version', GENERALDEP),
             'pyqt4-dbus':      (True,  ['gui_qt4'], QT4DBUS_STR, self.check_pyqt4_dbus, DEPENDENCY_RUN_TIME, '4.0', 'FUNC#get_pyQt4_version', GENERALDEP),
             # PyQt 4.x )
             'pyqt4':            (True,  ['gui_qt4'], QT4_STR, self.check_pyqt4, DEPENDENCY_RUN_TIME, '4.0', 'FUNC#get_pyQt4_version', GENERALDEP),
-            'pyqt5-dbus':      (True,  ['gui_qt5'], QT5DBUS_STR, self.check_pyqt5_dbus, DEPENDENCY_RUN_TIME, '5.0', 'FUNC#get_pyQt5_version', GENERALDEP),
+            'pyqt5-dbus':      (False,  ['gui_qt5'], QT5DBUS_STR, self.check_pyqt5_dbus, DEPENDENCY_RUN_TIME, '5.0', 'FUNC#get_pyQt5_version', GENERALDEP),
             # PyQt 5.x )
             'pyqt5':            (True,  ['gui_qt5'], QT5_STR, self.check_pyqt5, DEPENDENCY_RUN_TIME, '5.0', 'FUNC#get_pyQt5_version', GENERALDEP),
             'python-dbus':      (True,  ['fax'], PYDBUS_STR, self.check_python_dbus, DEPENDENCY_RUN_TIME, '0.80.0', 'FUNC#get_python_dbus_ver', GENERALDEP),
             'python-xml':     (True,  ['base'], PYXML_STR, self.check_python_xml, DEPENDENCY_RUN_TIME, '-', 'FUNC#get_python_xml_version', GENERALDEP),
             'python-devel':    (True,  ['base'], PY_DEV_STR, self.check_python_devel, DEPENDENCY_COMPILE_TIME, '2.2', 'python --version', GENERALDEP),
             'pil':              (False, ['scan'], PIL_STR, self.check_pil, DEPENDENCY_RUN_TIME, '-', 'FUNC#get_pil_version', GENERALDEP),
+            #'imutils':          (True, ['scan'], IMUTILS_STR, self.check_imutils, DEPENDENCY_RUN_TIME, '-', None, GENERALDEP),
             # Optional fax packages
             'reportlab':        (False, ['fax'], REPORTLAB_STR, self.check_reportlab, DEPENDENCY_RUN_TIME, '2.0', 'FUNC#get_reportlab_version', GENERALDEP),
+            #'tesserocr':          (True, ['scan'], TESSEROCR_STR, self.check_tesserocr, DEPENDENCY_RUN_TIME, '-', None, GENERALDEP),
 
         }
 
         python3_dep = {
             'python3X':           (True,  ['base'], PYTHON_STR, self.check_python, DEPENDENCY_RUN_AND_COMPILE_TIME, '2.2', 'python3 --version', GENERALDEP),
             # Optional for libnotify style popups from hp-systray
+            #'py3_setuptools':      (False, ['scan'], SETUPTOOLS_STR, self.check_setuptools, DEPENDENCY_RUN_TIME, '-', None, GENERALDEP),
+            #'python3-pip':          (True, ['scan'], PIP_STR, self.check_pip3, DEPENDENCY_RUN_TIME, '-', None, GENERALDEP),
+            #'pypdf2':          (True, ['scan'], PYPDF2_STR, self.check_pypdf2, DEPENDENCY_RUN_TIME, '-', None, GENERALDEP),
+            #'opencv':          (True, ['scan'], OPENCV_STR, self.check_opencv, DEPENDENCY_RUN_TIME, '-', None, GENERALDEP),
             'python3-notify2':   (False, ['gui_qt5', 'gui_qt4'], PYNTF_STR, self.check_pynotify, DEPENDENCY_RUN_TIME, '-', 'python-notify --version', GENERALDEP),
             'python3-pyqt4-dbus': (False, ['gui_qt4'], QT4DBUS_STR, self.check_pyqt4_dbus, DEPENDENCY_RUN_TIME, '4.0', 'FUNC#get_pyQt4_version', GENERALDEP),
             # PyQt 4.x )
@@ -419,8 +445,10 @@ class CoreInstall(object):
             'python3-xml':      (True,  ['base'], PYXML_STR, self.check_python_xml, DEPENDENCY_RUN_TIME, '-', 'FUNC#get_python_xml_version', GENERALDEP),
             'python3-devel':     (True,  ['base'], PY_DEV_STR, self.check_python_devel, DEPENDENCY_COMPILE_TIME, '2.2', 'python3 --version', GENERALDEP),
             'python3-pil':        (False, ['scan'], PIL_STR, self.check_pil, DEPENDENCY_RUN_TIME, '-', 'FUNC#get_pil_version', GENERALDEP),
+            #'imutils':          (True, ['scan'], IMUTILS_STR, self.check_imutils, DEPENDENCY_RUN_TIME, '-', None, GENERALDEP),
             # Optional fax packages
             'python3-reportlab':  (False, ['fax'], REPORTLAB_STR, self.check_reportlab, DEPENDENCY_RUN_TIME, '2.0', 'FUNC#get_reportlab_version', GENERALDEP),
+            #'tesserocr':          (True, ['scan'], TESSEROCR_STR, self.check_tesserocr, DEPENDENCY_RUN_TIME, '-', None, GENERALDEP),
         }
 
         from base.sixext import PY3
@@ -614,14 +642,20 @@ class CoreInstall(object):
             import platform
             name = platform.dist()[0].lower()
             ver = platform.dist()[1]
-            found = True
+            if not name:
+                found = False
+                log.debug("Not able to detect distro")
+            else:
+                found = True
+                log.debug("Able to detect distro")
         except ImportError:
             found = False
+            log.debug("Not able to detect distro in exception")
 
         # Getting distro information using lsb_release command
-        # platform retrurn 'redhat' even for 'RHEL' so re-reading using
+        # platform retrurn 'redhat' even for 'RHEL' or 'arch' for ManjaroLinux so re-reading using
         # lsb_release.
-        if not found or name == 'redhat':
+        if not found or name == 'redhat' or name == 'arch':
             lsb_rel = utils.which("lsb_release", True)
             if lsb_rel:
                 log.debug("Using 'lsb_release -is/-rs'")
@@ -1111,11 +1145,13 @@ class CoreInstall(object):
             return False
 
     def check_dbus(self):
-        log.debug(
-            "Checking for dbus running and header files present (dbus-devel)...")
-        return check_ps(['dbus-daemon'])  and \
-            len(locate_file_contains("dbus-message.h",
-                                     '/usr/include', 'dbus_message_new_signal'))
+        log.debug("Checking for dbus running and header files present (dbus-devel)...")
+        if (self.distro_name.lower()=='fedora') and (self.distro_version>='30'):
+            return True
+        else:
+            return check_ps(['dbus-daemon'])  and \
+                len(locate_file_contains("dbus-message.h",
+                                         '/usr/include', 'dbus_message_new_signal'))
 
     def check_cups_devel(self):
         return check_file('cups.h') and bool(utils.which('lpr'))
@@ -1139,7 +1175,57 @@ class CoreInstall(object):
     def check_libtool(self):
         log.debug("Checking for libtool...")
         return check_tool('libtool --version')
+    
+    '''def check_pip(self):
+        return check_tool('pip2 --version')
 
+    def check_pip3(self):
+        return check_tool('pip3 --version')
+
+    def check_tesseract(self):
+        return check_tool('tesseract --version')
+
+    def check_opencv(self):
+        try:
+            import cv2
+            return True
+        except ImportError:
+            return False
+            
+    def check_tesserocr(self):
+        try:
+            import tesserocr
+            return True
+        except ImportError:
+            return False
+            
+    def check_imutils(self):
+        try:
+            import imutils
+            return True
+        except ImportError:
+            return False               
+
+    def check_zbar(self):
+        return check_file("zbar.h", "/usr/include/")
+
+    def check_libleptonica(self):
+        return check_file("allheaders.h", "/usr/include/leptonica")
+
+    def check_setuptools(self):
+        try:
+            import setuptools
+            return True
+        except ImportError:
+            return False            
+
+    def check_pypdf2(self):
+        try:
+            import PyPDF2
+            return True
+        except ImportError:
+            return False             
+'''
     def check_pil(self):
         log.debug("Checking for PIL...")
         try:
@@ -1353,7 +1439,7 @@ class CoreInstall(object):
             configuration['dbus-build'] = False
             configuration['qt4'] = False
             configuration['qt5'] = False
-            configuration['class-driver'] = True          
+            configuration['class-driver'] = True
         else:
             configuration['scan-build'] = self.selected_options['scan']
             configuration[
@@ -1777,7 +1863,7 @@ class CoreInstall(object):
             x = 1
             for cmd in pre_cmd:
                 status, output = utils.run(cmd, self.passwordObj)
-                if any(['yum' in cmd, 'zypper' in cmd, 'dnf' in cmd]):
+                if any(['yum' in cmd, 'zypper' in cmd, 'dnf' in cmd, 'pacman' in cmd]):
                     if status == 1:
                         log.warn("An error occurred running '%s'" % cmd)
                 else:
@@ -1805,6 +1891,31 @@ class CoreInstall(object):
                     callback(cmd, "Post-depend step %d" % x)
 
                 x += 1
+
+    def run_scanjet_depend(self, callback=None, distro_ver=None):
+        from base.sixext import PY3
+        if PY3:
+            scanjet_cmd = self.get_distro_ver_data('scanjet_py3_depend_cmd', None, distro_ver)
+        else:
+            scanjet_cmd = self.get_distro_ver_data('scanjet_depend_cmd', None, distro_ver)
+        log.debug(scanjet_cmd)
+        if scanjet_cmd:
+            x = 1
+            #log.info("x is %d"%x)
+            for cmd in scanjet_cmd:
+                #log.info("cmd is %s"%cmd)
+                if callback is not None:
+                    callback(cmd, "Scanjet-depend step %d" % x)
+                status, output = utils.run(cmd, self.passwordObj)
+                #log.info("status is %d"%status)
+                if status !=0: 
+                    log.warn("Failed to install this Scanjet dependency package. Some Scanjet features will not work.")  
+                #if callback is not None:
+                    #callback(cmd, "Scanjet-depend step %d" % x) 
+
+                x += 1
+            '''if status !=0:
+                sys.exit(0)'''
 
     def pre_build(self, distro_ver=None):
         cmds = []

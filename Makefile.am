@@ -13,7 +13,9 @@ docdir = $(hpdocdir)
 htmldir = $(hphtmldir)
 doc_DATA = COPYING copyright prnt/hpijs/README_LIBJPG
 EXTRA_DIST = prnt/hpijs/gdevijs-krgb-1.5-gs8.61.patch prnt/hpijs/README_LIBJPG copyright
-UNAME = $(shell uname -p)
+UNAME = $(shell uname -m)
+EXPORT_PATH=$(shell export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$PWD/prnt/hpcups/)
+EXPORT_PATH1=$(shell export LIBRARY_PATH=$LIBRARY_PATH:$PWD/prnt/hpcups/)
 
 dist_noinst_SCRIPTS =
 dist_noinst_DATA =
@@ -60,7 +62,9 @@ libsane_hpaio_la_SOURCES = scan/sane/hpaio.c scan/sane/mfpdtf.c scan/sane/pml.c 
 	  scan/sane/sanei_init_debug.c scan/sane/marvell.h scan/sane/marvelli.h scan/sane/marvell.c scan/sane/soapht.c scan/sane/soap.c \
         scan/sane/soaphti.h scan/sane/soapi.h scan/sane/xml.c scan/sane/xml.h scan/sane/ledm.h scan/sane/ledmi.h scan/sane/ledm.c \
         scan/sane/bb_ledm.c scan/sane/http.h scan/sane/http.c scan/sane/sclpml.c scan/sane/sclpml.h common/utils.c common/utils.h \
-	scan/sane/escl.h scan/sane/escli.h scan/sane/escl.c
+	scan/sane/escl.h scan/sane/escli.h scan/sane/escl.c \
+	scan/sane/orblitei.h scan/sane/orblite.h scan/sane/orblite.c \
+	scan/sane/OrbliteScan/LinuxCommon.h scan/sane/OrbliteScan/MacCommon.h
 if DARWIN_BUILD
 libsane_hpaio_la_LDFLAGS = -module -framework CoreFoundation -version-info 1:0:0
 else
@@ -162,7 +166,7 @@ if !HPLIP_CLASS_DRIVER
 dist_hplip_SCRIPTS = hpssd.py __init__.py hpdio.py
 endif #HPLIP_CLASS_DRIVER
 
-dist_noinst_DATA += prnt/drv/hpijs.drv.in.template prnt/drv/hpcups.drv.in.template
+dist_noinst_DATA += prnt/drv/hpijs.drv.in.template prnt/drv/hpcups.drv.in.template prnt/hpcups/libImageProcessor-x86_64.so prnt/hpcups/libImageProcessor-x86_32.so
 dist_noinst_SCRIPTS += dat2drv.py install.py  hplip-install init-suse-firewall init-iptables-firewall class_rpm_build.sh hplipclassdriver.spec createPPD.sh Makefile_dat2drv hpijs-drv
 
 if !HPLIP_CLASS_DRIVER
@@ -174,7 +178,7 @@ if !HPLIP_CLASS_DRIVER
 dist_cmd_SCRIPTS = align.py info.py print.py toolbox.py clean.py colorcal.py unload.py testpage.py makeuri.py check.py fab.py levels.py \
 	sendfax.py setup.py makecopies.py probe.py timedate.py firmware.py scan.py systray.py plugin.py linefeedcal.py pqdiag.py \
 	faxsetup.py devicesettings.py printsettings.py query.py pkservice.py wificonfig.py diagnose_plugin.py uninstall.py \
-	upgrade.py config_usb_printer.py diagnose_queues.py logcapture.py doctor.py
+	upgrade.py config_usb_printer.py diagnose_queues.py logcapture.py doctor.py uiscan.py
 
 homedir = $(hplipdir)
 dist_home_DATA =  check-plugin.py 
@@ -189,7 +193,7 @@ dist_base_DATA = base/maint.py base/codes.py base/g.py base/pml.py base/status.p
 	base/imagesize.py base/models.py base/validation.py base/sixext.py base/avahi.py \
 	base/mdns.py base/tui.py base/dime.py base/ldif.py base/vcard.py base/module.py \
 	base/pkit.py base/queues.py base/password.py base/services.py base/os_utils.py \
-	base/smart_install.py base/six.py
+	base/smart_install.py base/six.py base/imageprocessing.py
 
 basepexpectdir = $(hplipdir)/base/pexpect
 dist_basepexpect_DATA=base/pexpect/__init__.py
@@ -240,10 +244,9 @@ dist_apparmor_abstraction_DATA = apparmor/abstractions/hplip
 endif #APPARMOR_BUILD
 endif #!HPLIP_CLASS_DRIVER
 
-if !HPLIP_CLASS_DRIVER
 selinuxdir = 
-dist_selinux_DATA = selinux/hplip.te selinux/hplip.fc selinux/hplip.pp selinux/hplip.if
-
+dist_selinux_DATA = selinux/hplip.te selinux/hplip.fc selinux/hplip.pp selinux/hplip.if selinux/mypol.pp selinux/mypol.te
+if !HPLIP_CLASS_DRIVER
 # ptest
 noinst_PROGRAMS += ptest
 ptest_SOURCES = pcard/ptest.c pcard/ptest.h pcard/fat.c pcard/fat.h
@@ -470,6 +473,10 @@ hplip_desktop_DATA = hplip.desktop
 # hplip-systray.desktop
 hplip_systraydir = $(systraydir)
 hplip_systray_DATA = hplip-systray.desktop
+
+#hp-uiscan_desktop
+hp_uiscan_desktopdir = $(icondir)
+hp_uiscan_desktop_DATA = hp-uiscan.desktop
 endif 
 
 
@@ -583,11 +590,11 @@ hpcups_SOURCES = prnt/hpcups/HPCupsFilter.cpp prnt/hpcups/HPCupsFilter.h prnt/hp
 	prnt/hpcups/flate_colorspace.h prnt/hpcups/RunLenEncoding.h prnt/hpcups/common_defines.h \
 	prnt/hpcups/genPCLm.h \
 	common/utils.c common/utils.h prnt/hpcups/Hbpl1_Wrapper.cpp prnt/hpcups/genPCLm.cpp \
-	prnt/hpcups/genJPEGStrips.cpp prnt/hpcups/RunLenEncoding.cpp
+	prnt/hpcups/genJPEGStrips.cpp prnt/hpcups/RunLenEncoding.cpp \
+	prnt/hpcups/ImageProcessor.h
 
 hpcups_CXXFLAGS = $(APDK_ENDIAN_FLAG) $(DBUS_CFLAGS)
-hpcups_LDADD = -ljpeg -ldl -lcups -lcupsimage -lz $(DBUS_LIBS)
-
+hpcups_LDADD = -L./prnt/hpcups/ -ljpeg -ldl -lImageProcessor -lcups -lcupsimage -lz $(DBUS_LIBS)
 #else
 #hpcupsdir = $(cupsfilterdir)
 #hpcups_PROGRAMS = hpcups
@@ -623,7 +630,7 @@ endif
 if HPPS_INSTALL
 hppsdir = $(cupsfilterdir)
 hpps_PROGRAMS = hpps
-hpps_SOURCES = prnt/hpps/hppsfilter.c prnt/hpps/hppsfilter.h
+hpps_SOURCES = prnt/hpps/hppsfilter.c prnt/hpps/hppsfilter.h prnt/hpps/psutil.c prnt/hpps/psutil.h prnt/hpps/pserror.c prnt/hpps/pserror.h prnt/hpps/psbooklet.c prnt/hpps/patchlev.h prnt/hpps/psspec.c prnt/hpps/psspec.h
 hpps_CXXFLAGS = $(APDK_ENDIAN_FLAG) $(DBUS_CFLAGS)
 hpps_LDADD = -lcups  $(DBUS_LIBS)
 endif #HPPS_INSTALL
@@ -677,6 +684,16 @@ endif #HPLIP_CLASS_DRIVER
 
 install-data-hook:
 if HPLIP_BUILD
+	if [ \( "$(UNAME)" = "x86_64" -a  -d "$(libdir)/" \) ]; then \
+		cp prnt/hpcups/libImageProcessor-x86_64.so $(libdir)/ ; \
+		chmod 775 $(libdir)/libImageProcessor-x86_64.so ; \
+		ln -sf $(libdir)/libImageProcessor-x86_64.so $(libdir)/libImageProcessor.so ; \
+	fi; \
+	if [ \( \( "$(UNAME)" = "i686" -o "$(UNAME)" = "i386" \) -a -d "$(libdir)/" \) ]; then \
+		cp prnt/hpcups/libImageProcessor-x86_32.so $(libdir)/ ; \
+		chmod 775 $(libdir)/libImageProcessor-x86_32.so ; \
+		ln -sf $(libdir)/libImageProcessor-x86_32.so $(libdir)/libImageProcessor.so ; \
+	fi
 if !HPLIP_CLASS_DRIVER
 #	   If scanner build, add hpaio entry to sane dll.conf.
 	if [ "$(scan_build)" = "yes" ]; then \
@@ -691,6 +708,12 @@ if !HPLIP_CLASS_DRIVER
  	   if [ \( "$(UNAME)" = "x86_64" -a  -d "$(libdir)/x86_64-linux-gnu/sane" \) ]; then \
 	  	ln -sf $(libdir)/sane/libsane-hpaio.so $(libdir)/x86_64-linux-gnu/sane/ ; \
 	  	ln -sf $(libdir)/sane/libsane-hpaio.so.1 $(libdir)/x86_64-linux-gnu/sane/ ; \
+	   fi; \
+	   if [ \( \( "$(UNAME)" = "i686" -o "$(UNAME)" = "i386" \) -a -d "$(libdir)/i386-linux-gnu" \) ]; then \
+	      ln -sf $(libdir)/libhpmud.so.0.0.6  $(libdir)/i386-linux-gnu/libhpmud.so ; \
+	      ln -sf $(libdir)/libhpmud.so.0.0.6  $(libdir)/i386-linux-gnu/libhpmud.so.0 ; \
+	      ln -sf $(libdir)/sane/libsane-hpaio.so.1.0.0 $(libdir)/i386-linux-gnu/sane/libsane-hpaio.so.1 ; \
+	      ln -sf $(libdir)/sane/libsane-hpaio.so.1.0.0 $(libdir)/i386-linux-gnu/sane/libsane-hpaio.so ; \
 	   fi \
 	fi
 endif #HPLIP_CLASS_DRIVER
@@ -744,6 +767,11 @@ endif
 
 #tarfile(ignoring scan and fax files)
 dist-hook:
+if !HPLIP_CLASS_DRIVER
+	rm -rf $(distdir)/hpps
+	rm -rf $(distdir)/hpcups
+	rm -rf $(distdir)/dat2drv
+endif
 if HPLIP_CLASS_DRIVER
 	rm -rf $(distdir)/faxsetup.py
 	rm -rf $(distdir)/sendfax.py
@@ -755,6 +783,7 @@ if HPLIP_CLASS_DRIVER
 	rm -rf $(distdir)/ui5/
 	rm -rf $(distdir)/align.py
 	rm -rf $(distdir)/info.py
+	rm -rf $(distdir)/uiscan.py
 	rm -rf $(distdir)/toolbox.py
 	rm -rf $(distdir)/clean.py
 	rm -rf $(distdir)/colorcal.py
@@ -773,7 +802,7 @@ if HPLIP_CLASS_DRIVER
 	rm -rf $(distdir)/logcapture.py
 	rm -rf $(distdir)/doctor.py
 	rm -rf $(distdir)/devicesettings.py
-	rm -rf $(distdir)/selinux/
+#	rm -rf $(distdir)/selinux/
 	rm -rf $(distdir)/installer/
 	rm -rf $(distdir)/copier/
 	rm -rf $(distdir)/apparmor/
@@ -798,6 +827,7 @@ if HPLIP_CLASS_DRIVER
 	rm -rf $(distdir)/__init__.py
 	rm -rf $(distdir)/hpdio.py
 	rm -rf $(distdir)/hplip.desktop.in
+	rm -rf $(distdir)/hp-uiscan.desktop.in
 	rm -rf $(distdir)/hplip-systray.desktop.in
 	rm -rf $(distdir)/print.py
 	rm -rf $(distdir)/printsettings.py
