@@ -558,7 +558,7 @@ fi
 
 AC_MSG_CHECKING(for host machine platform)
 machine=`uname -m`
-if test "$machine" = "x86_32" || test "$machine" = "i686"; then
+if test "$machine" = "x86_32" || test "$machine" = "i686" || test "$machine" = "i386"; then
     platform="x86_32"
 elif test "$machine" = "x86_64"; then
     platform="x86_64"
