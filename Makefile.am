@@ -72,7 +72,7 @@ libsane_hpaio_la_SOURCES = scan/sane/hpaio.c scan/sane/mfpdtf.c scan/sane/pml.c 
 if DARWIN_BUILD
 libsane_hpaio_la_LDFLAGS = -module -framework CoreFoundation -version-info 1:0:0
 else
-libsane_hpaio_la_LDFLAGS = -version-info 1:0:0 -buildlevel '$(BUILDLEVEL_INFO)'
+libsane_hpaio_la_LDFLAGS = -version-info 1:0:0 -shortname hpaio -buildlevel '$(BUILDLEVEL_INFO)'
 endif
 # The following is a interlibrary dependency that must be compiled first.
 libsane_hpaio_la_LIBADD = libhpip.la libhpmud.la libhpipp.la $(DBUS_LIBS) -lcups -ldl
@@ -349,6 +349,7 @@ scanext_LTLIBRARIES = scanext.la
 scanext_la_LDFLAGS = -module -avoid-version -lsane -buildlevel '$(BUILDLEVEL_INFO)'
 scanext_la_SOURCES =  scan/scanext/scanext.c
 scanext_la_CFLAGS = -I$(PYTHONINCLUDEDIR)
+scanext_la_LIBADD = -lpython2.7
 endif #SCAN_BUILD
 endif #!HPLIP_CLASS_DRIVER
 

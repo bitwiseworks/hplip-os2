@@ -1,12 +1,12 @@
 #ifndef H_MacCommon
 #define H_MacCommon
 
-#ifndef __linux__
+#if !defined(__linux__) && !defined(__OS2__)
 #include <CoreFoundation/CFPlugInCOM.h>
 #define __CFPlugInCOM_Included__
 #endif
 
-#ifdef __linux__
+#if defined(__linux__) || defined(__OS2__)
 #    include "LinuxCommon.h"
 #endif
 

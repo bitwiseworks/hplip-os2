@@ -2663,7 +2663,11 @@ SANE_Status sclpml_start(SANE_Handle handle)
             if (getenv("HOME"))
                 sprintf(f, "%s/.hplip/mfpdtf_%d.out", getenv("HOME"), cnt++);
             else
+#ifdef __OS2__
+                sprintf(f, "/@unixroot/var/tmp/mfpdtf_%d.out", cnt++);
+#else
                 sprintf(f, "/tmp/mfpdtf_%d.out", cnt++);
+#endif
 
             bug("saving raw image to %s \n", f);
 

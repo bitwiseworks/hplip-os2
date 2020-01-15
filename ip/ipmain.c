@@ -310,7 +310,11 @@ EXPORT(WORD) ipOpen (
     PXFORM_INFO     dest;
 
 #ifdef HPIP_DEBUG
+#ifdef __OS2__
+    char *ipIn = "/@unixroot/var/tmp/ipIn.dib";
+#else
     char *ipIn = "/tmp/ipIn.dib";
+#endif
 #endif
 
     PRINT0 (_T("ipOpen: nXforms=%d\n"), nXforms);
@@ -323,11 +327,19 @@ EXPORT(WORD) ipOpen (
        {
           case X_FAX_DECODE:
             PRINT0("Fax_format=%d\n", lpXforms[i].aXformInfo[IP_FAX_FORMAT].dword);
+#ifdef __OS2__
+            ipIn = "/@unixroot/var/tmp/ipIn.pbm";
+#else
             ipIn = "/tmp/ipIn.pbm";
+#endif
             break;
           case X_JPG_DECODE:
             PRINT0("JPG_decode=%d\n", lpXforms[i].aXformInfo[IP_JPG_DECODE_FROM_DENALI].dword);
+#ifdef __OS2__
+            ipIn = "/@unixroot/var/tmp/ipIn.jpg";
+#else
             ipIn = "/tmp/ipIn.jpg";
+#endif
             break;
           case X_CNV_COLOR_SPACE:
             PRINT0("Color_space conversion=%d\n", lpXforms[i].aXformInfo[IP_CNV_COLOR_SPACE_WHICH_CNV].dword);
@@ -354,7 +366,11 @@ EXPORT(WORD) ipOpen (
     }
 
     infd = creat(ipIn, 0600);
+#ifdef __OS2__
+    outfd = creat("/@unixroot/var/tmp/ipOut.ppm", 0600);
+#else
     outfd = creat("/tmp/ipOut.ppm", 0600);
+#endif
 #endif
 
     /**** Create Instance and Init Misc Variables ****/
