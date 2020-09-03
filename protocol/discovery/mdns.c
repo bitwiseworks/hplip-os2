@@ -24,6 +24,11 @@
  Author: Sanjay Kumar
  \*****************************************************************************/
 
+#ifdef __OS2__
+#include <stdio.h>
+#include <stdlib.h>
+#include <sys/time.h>
+#endif
 //#include <stdio.h>
 #include <string.h>
 #include <syslog.h>
