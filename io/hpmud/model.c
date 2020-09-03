@@ -103,11 +103,7 @@ static int ReadConfig()
 
    homedir[0] = 0;
         
-#ifdef __OS2__
-   if((inFile = fopen(CONFDIR "/hplip.conf", "rb")) == NULL) 
-#else
-   if((inFile = fopen(CONFDIR "/hplip.conf", "r")) == NULL) 
-#endif
+   if((inFile = fopen(CONFDIR "/hplip.conf", "r")) == NULL)
    {
       BUG("unable to open %s: %m\n", CONFDIR "/hplip.conf");
       goto bugout;
@@ -374,11 +370,7 @@ static int ParseInc(char *incFile)
       }
    }
 
-#ifdef __OS2__
-   if ((fp = fopen(incFile, "rb")) == NULL)
-#else
    if ((fp = fopen(incFile, "r")) == NULL)
-#endif
    {
       BUG("open %s failed: %m\n", incFile);
       goto bugout;
@@ -415,11 +407,7 @@ static int ParseFile(char *datFile, char *model, char *attr, int attrSize, int *
    char file[128];
    int found=0, n;
 
-#ifdef __OS2__
-   if ((fp = fopen(datFile, "rb")) == NULL)
-#else
    if ((fp = fopen(datFile, "r")) == NULL)
-#endif
       goto bugout;
 
    section[0] = 0;

@@ -107,11 +107,7 @@ enum UTILS_CONF_RESULT get_key_value(const char *file, const char *section, cons
    enum UTILS_CONF_RESULT stat = UTILS_CONF_DATFILE_ERROR;
    int i,j;
 
-#ifdef __OS2__
-   if((inFile = fopen(file, "rb")) == NULL) 
-#else
-   if((inFile = fopen(file, "r")) == NULL) 
-#endif
+   if((inFile = fopen(file, "r")) == NULL)
    {
       BUG("unable to open %s: %m\n", file);
       goto bugout;
@@ -320,7 +316,7 @@ int getHPLogLevel()
     int iLogLevel = 0;
 
 #ifdef __OS2__
-    fp = fopen ("/@unixroot/etc/cups/cupsd.conf", "rb");
+    fp = fopen ("/@unixroot/etc/cups/cupsd.conf", "r");
 #else
     fp = fopen ("/etc/cups/cupsd.conf", "r");
 #endif
