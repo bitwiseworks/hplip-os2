@@ -307,14 +307,6 @@ if !HPLIP_CLASS_DRIVER
 pcarddir = $(hplipdir)/pcard
 dist_pcard_DATA = pcard/__init__.py pcard/photocard.py
 
-# pcardext
-pcardextdir = $(pyexecdir)
-pcardext_LTLIBRARIES = pcardext.la
-pcardext_la_LDFLAGS = -module -avoid-version -buildlevel '$(BUILDLEVEL_INFO)'
-pcardext_la_SOURCES = pcard/pcardext/pcardext.c pcard/fat.c
-pcardext_la_CFLAGS = -I$(PYTHONINCLUDEDIR)
-pcardext_la_LIBADD = -lpython3.9
-
 # prnt
 prntdir = $(hplipdir)/prnt
 dist_prnt_DATA = prnt/cups.py prnt/__init__.py prnt/ldl.py prnt/pcl.py prnt/colorcal.py
