@@ -604,6 +604,9 @@ if test "$class_driver" = "no" && test "$hpijs_only_build" = "no" && test "$hpcu
    fi
 fi
 
+save_CFLAGS="$CFLAGS"
+CFLAGS=`python-config --includes`
+
 if test "$class_driver" = "no" && test "$hpijs_only_build" = "no" && test "$lite_build" = "no" && test "$hpcups_only_build" = "no"; then
    AC_ARG_VAR([PYTHON], [Python interpreter/compiler command])
    AM_PATH_PYTHON([2.2])
@@ -616,6 +619,7 @@ if test "$class_driver" = "no" && test "$hpijs_only_build" = "no" && test "$lite
    AS_IF([test "x$FOUND_HEADER" != "xyes"],
           [AC_MSG_ERROR([cannot find python-devel support], 6)])
 fi
+CFLAGS="$save_CFLAGS"
 
 if test "$hpijs_only_build" = "no" && test "$scan_build" = "yes" && test "$hpcups_only_build" = "no"; then
    AC_CHECK_LIB([sane], [sane_open], [LIBS="$LIBS"], [AC_MSG_ERROR([cannot find sane-backends-devel support (or --disable-scan-build)], 12)])
