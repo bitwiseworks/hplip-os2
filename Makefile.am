@@ -326,7 +326,7 @@ cupsext_LTLIBRARIES = cupsext.la
 cupsext_la_LDFLAGS = -module -avoid-version -buildlevel '$(BUILDLEVEL_INFO)'
 cupsext_la_SOURCES =  prnt/cupsext/cupsext.c prnt/cupsext/cupsext.h
 cupsext_la_CFLAGS = -I$(PYTHONINCLUDEDIR) -I$(srcdir)/protocol
-cupsext_la_LIBADD = -lpython3.9 -lcups libhpipp.la
+cupsext_la_LIBADD = -lcups libhpipp.la
 endif #HPLIP_CLASS_DRIVER
 
 if !HPLIP_CLASS_DRIVER
@@ -341,7 +341,6 @@ scanext_LTLIBRARIES = scanext.la
 scanext_la_LDFLAGS = -module -avoid-version -lsane -buildlevel '$(BUILDLEVEL_INFO)'
 scanext_la_SOURCES =  scan/scanext/scanext.c
 scanext_la_CFLAGS = -I$(PYTHONINCLUDEDIR)
-scanext_la_LIBADD = -lpython3.9
 endif #SCAN_BUILD
 endif #!HPLIP_CLASS_DRIVER
 
@@ -352,7 +351,7 @@ hpmudext_LTLIBRARIES = hpmudext.la
 hpmudext_la_LDFLAGS = -module -avoid-version -buildlevel '$(BUILDLEVEL_INFO)'
 hpmudext_la_SOURCES = io/mudext/hpmudext.c
 hpmudext_la_CFLAGS = -I$(PYTHONINCLUDEDIR)
-hpmudext_la_LIBADD = -lpython3.9 libhpmud.la
+hpmudext_la_LIBADD = libhpmud.la
 
 if NETWORK_BUILD
 hpmudext_la_LIBADD += libhpdiscovery.la
